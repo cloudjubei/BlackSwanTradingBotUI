@@ -1,0 +1,9 @@
+#!/usr/bin/env zsh
+
+rm -rf ./src/api/gen
+
+java -jar ../openapi-generator-cli-7.0.1.jar generate \
+    -i ../BlackSwanTradingBot/src/spec/swagger.json \
+    -g typescript-axios \
+    -o ./src/api/gen
+    # -i ./swagger \
