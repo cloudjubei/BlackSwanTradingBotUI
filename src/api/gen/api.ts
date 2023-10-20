@@ -13,16 +13,33 @@
  */
 
 
-import type { Configuration } from './configuration';
-import type { AxiosPromise, AxiosInstance, AxiosRequestConfig } from 'axios';
-import globalAxios from 'axios';
+import { Configuration } from './configuration';
+import globalAxios, { AxiosPromise, AxiosInstance, AxiosRequestConfig } from 'axios';
 // Some imports not used depending on template conditions
 // @ts-ignore
 import { DUMMY_BASE_URL, assertParamExists, setApiKeyToObject, setBasicAuthToObject, setBearerAuthToObject, setOAuthToObject, setSearchParams, serializeDataIfNeeded, toPathString, createRequestFunction } from './common';
-import type { RequestArgs } from './base';
 // @ts-ignore
-import { BASE_PATH, COLLECTION_FORMATS, BaseAPI, RequiredError } from './base';
+import { BASE_PATH, COLLECTION_FORMATS, RequestArgs, BaseAPI, RequiredError } from './base';
 
+/**
+ * 
+ * @export
+ * @interface ConfigConnectionInputModel
+ */
+export interface ConfigConnectionInputModel {
+    /**
+     * 
+     * @type {string}
+     * @memberof ConfigConnectionInputModel
+     */
+    'host': string;
+    /**
+     * 
+     * @type {number}
+     * @memberof ConfigConnectionInputModel
+     */
+    'port': number;
+}
 /**
  * 
  * @export
@@ -44,6 +61,12 @@ export interface ConfigModel {
 export interface ConfigSignalInputModel {
     /**
      * 
+     * @type {string}
+     * @memberof ConfigSignalInputModel
+     */
+    'host': string;
+    /**
+     * 
      * @type {number}
      * @memberof ConfigSignalInputModel
      */
@@ -60,6 +83,74 @@ export interface ConfigSignalInputModel {
      * @memberof ConfigSignalInputModel
      */
     'intervals': Array<string>;
+}
+/**
+ * 
+ * @export
+ * @interface PriceModel
+ */
+export interface PriceModel {
+    /**
+     * 
+     * @type {string}
+     * @memberof PriceModel
+     */
+    'tokenPair': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof PriceModel
+     */
+    'interval': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof PriceModel
+     */
+    'price': string;
+    /**
+     * 
+     * @type {number}
+     * @memberof PriceModel
+     */
+    'timestamp': number;
+}
+/**
+ * 
+ * @export
+ * @interface SignalModel
+ */
+export interface SignalModel {
+    /**
+     * 
+     * @type {string}
+     * @memberof SignalModel
+     */
+    'tokenPair': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof SignalModel
+     */
+    'interval': string;
+    /**
+     * 
+     * @type {number}
+     * @memberof SignalModel
+     */
+    'timestamp': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof SignalModel
+     */
+    'action': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof SignalModel
+     */
+    'certainty': number;
 }
 /**
  * 
@@ -209,12 +300,6 @@ export interface TradingSetupModel {
     'secondAmount': string;
     /**
      * 
-     * @type {number}
-     * @memberof TradingSetupModel
-     */
-    'lastUpdate': number;
-    /**
-     * 
      * @type {string}
      * @memberof TradingSetupModel
      */
@@ -262,8 +347,6 @@ export interface TradingSetupModel {
      */
     'openTransactions': object;
 }
-
-
 /**
  * 
  * @export
@@ -403,6 +486,19 @@ export interface TradingTransactionModel {
      */
     'lastUpdateTimestamp': number;
 }
+/**
+ * 
+ * @export
+ * @interface WalletModel
+ */
+export interface WalletModel {
+    /**
+     * 
+     * @type {{ [key: string]: string; }}
+     * @memberof WalletModel
+     */
+    'amounts': { [key: string]: string; };
+}
 
 /**
  * DefaultApi - axios parameter creator
@@ -496,7 +592,6 @@ export class DefaultApi extends BaseAPI {
         return DefaultApiFp(this.configuration).appHealthCheck(options).then((request) => request(this.axios, this.basePath));
     }
 }
-
 
 
 /**
@@ -593,7 +688,6 @@ export class IdentityApi extends BaseAPI {
 }
 
 
-
 /**
  * PricesApi - axios parameter creator
  * @export
@@ -602,22 +696,21 @@ export const PricesApiAxiosParamCreator = function (configuration?: Configuratio
     return {
         /**
          * 
-         * @param {number} port 
-         * @param {string} token 
+         * @param {string} tokenPair 
          * @param {Array<string>} intervals 
+         * @param {ConfigConnectionInputModel} configConnectionInputModel 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        pricesAdd: async (port: number, token: string, intervals: Array<string>, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'port' is not null or undefined
-            assertParamExists('pricesAdd', 'port', port)
-            // verify required parameter 'token' is not null or undefined
-            assertParamExists('pricesAdd', 'token', token)
+        pricesAdd: async (tokenPair: string, intervals: Array<string>, configConnectionInputModel: ConfigConnectionInputModel, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'tokenPair' is not null or undefined
+            assertParamExists('pricesAdd', 'tokenPair', tokenPair)
             // verify required parameter 'intervals' is not null or undefined
             assertParamExists('pricesAdd', 'intervals', intervals)
-            const localVarPath = `/prices/{port}/{token}/{intervals}`
-                .replace(`{${"port"}}`, encodeURIComponent(String(port)))
-                .replace(`{${"token"}}`, encodeURIComponent(String(token)))
+            // verify required parameter 'configConnectionInputModel' is not null or undefined
+            assertParamExists('pricesAdd', 'configConnectionInputModel', configConnectionInputModel)
+            const localVarPath = `/prices/{tokenPair}/{intervals}`
+                .replace(`{${"tokenPair"}}`, encodeURIComponent(String(tokenPair)))
                 .replace(`{${"intervals"}}`, encodeURIComponent(String(intervals)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -632,9 +725,12 @@ export const PricesApiAxiosParamCreator = function (configuration?: Configuratio
 
 
     
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(configConnectionInputModel, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -643,11 +739,19 @@ export const PricesApiAxiosParamCreator = function (configuration?: Configuratio
         },
         /**
          * 
+         * @param {string} tokenPair 
+         * @param {string} interval 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        pricesGetAllPorts: async (options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            const localVarPath = `/prices/allPorts`;
+        pricesGetAll: async (tokenPair: string, interval: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'tokenPair' is not null or undefined
+            assertParamExists('pricesGetAll', 'tokenPair', tokenPair)
+            // verify required parameter 'interval' is not null or undefined
+            assertParamExists('pricesGetAll', 'interval', interval)
+            const localVarPath = `/prices/{tokenPair}/{interval}/all`
+                .replace(`{${"tokenPair"}}`, encodeURIComponent(String(tokenPair)))
+                .replace(`{${"interval"}}`, encodeURIComponent(String(interval)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -701,15 +805,19 @@ export const PricesApiAxiosParamCreator = function (configuration?: Configuratio
         },
         /**
          * 
-         * @param {string} token 
+         * @param {string} tokenPair 
+         * @param {string} interval 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        pricesGetPort: async (token: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'token' is not null or undefined
-            assertParamExists('pricesGetPort', 'token', token)
-            const localVarPath = `/prices/{token}`
-                .replace(`{${"token"}}`, encodeURIComponent(String(token)));
+        pricesGetLatest: async (tokenPair: string, interval: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'tokenPair' is not null or undefined
+            assertParamExists('pricesGetLatest', 'tokenPair', tokenPair)
+            // verify required parameter 'interval' is not null or undefined
+            assertParamExists('pricesGetLatest', 'interval', interval)
+            const localVarPath = `/prices/{tokenPair}/{interval}/latest`
+                .replace(`{${"tokenPair"}}`, encodeURIComponent(String(tokenPair)))
+                .replace(`{${"interval"}}`, encodeURIComponent(String(interval)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -734,15 +842,15 @@ export const PricesApiAxiosParamCreator = function (configuration?: Configuratio
         },
         /**
          * 
-         * @param {string} token 
+         * @param {string} tokenPair 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        pricesRemove: async (token: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'token' is not null or undefined
-            assertParamExists('pricesRemove', 'token', token)
-            const localVarPath = `/prices/{token}`
-                .replace(`{${"token"}}`, encodeURIComponent(String(token)));
+        pricesRemove: async (tokenPair: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'tokenPair' is not null or undefined
+            assertParamExists('pricesRemove', 'tokenPair', tokenPair)
+            const localVarPath = `/prices/{tokenPair}`
+                .replace(`{${"tokenPair"}}`, encodeURIComponent(String(tokenPair)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -777,23 +885,25 @@ export const PricesApiFp = function(configuration?: Configuration) {
     return {
         /**
          * 
-         * @param {number} port 
-         * @param {string} token 
+         * @param {string} tokenPair 
          * @param {Array<string>} intervals 
+         * @param {ConfigConnectionInputModel} configConnectionInputModel 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async pricesAdd(port: number, token: string, intervals: Array<string>, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.pricesAdd(port, token, intervals, options);
+        async pricesAdd(tokenPair: string, intervals: Array<string>, configConnectionInputModel: ConfigConnectionInputModel, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.pricesAdd(tokenPair, intervals, configConnectionInputModel, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
          * 
+         * @param {string} tokenPair 
+         * @param {string} interval 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async pricesGetAllPorts(options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<number>>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.pricesGetAllPorts(options);
+        async pricesGetAll(tokenPair: string, interval: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<PriceModel>>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.pricesGetAll(tokenPair, interval, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -807,22 +917,23 @@ export const PricesApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
-         * @param {string} token 
+         * @param {string} tokenPair 
+         * @param {string} interval 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async pricesGetPort(token: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<number>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.pricesGetPort(token, options);
+        async pricesGetLatest(tokenPair: string, interval: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PriceModel>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.pricesGetLatest(tokenPair, interval, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
          * 
-         * @param {string} token 
+         * @param {string} tokenPair 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async pricesRemove(token: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<number>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.pricesRemove(token, options);
+        async pricesRemove(tokenPair: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<string>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.pricesRemove(tokenPair, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
     }
@@ -837,22 +948,24 @@ export const PricesApiFactory = function (configuration?: Configuration, basePat
     return {
         /**
          * 
-         * @param {number} port 
-         * @param {string} token 
+         * @param {string} tokenPair 
          * @param {Array<string>} intervals 
+         * @param {ConfigConnectionInputModel} configConnectionInputModel 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        pricesAdd(port: number, token: string, intervals: Array<string>, options?: any): AxiosPromise<void> {
-            return localVarFp.pricesAdd(port, token, intervals, options).then((request) => request(axios, basePath));
+        pricesAdd(tokenPair: string, intervals: Array<string>, configConnectionInputModel: ConfigConnectionInputModel, options?: any): AxiosPromise<void> {
+            return localVarFp.pricesAdd(tokenPair, intervals, configConnectionInputModel, options).then((request) => request(axios, basePath));
         },
         /**
          * 
+         * @param {string} tokenPair 
+         * @param {string} interval 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        pricesGetAllPorts(options?: any): AxiosPromise<Array<number>> {
-            return localVarFp.pricesGetAllPorts(options).then((request) => request(axios, basePath));
+        pricesGetAll(tokenPair: string, interval: string, options?: any): AxiosPromise<Array<PriceModel>> {
+            return localVarFp.pricesGetAll(tokenPair, interval, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -864,21 +977,22 @@ export const PricesApiFactory = function (configuration?: Configuration, basePat
         },
         /**
          * 
-         * @param {string} token 
+         * @param {string} tokenPair 
+         * @param {string} interval 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        pricesGetPort(token: string, options?: any): AxiosPromise<number> {
-            return localVarFp.pricesGetPort(token, options).then((request) => request(axios, basePath));
+        pricesGetLatest(tokenPair: string, interval: string, options?: any): AxiosPromise<PriceModel> {
+            return localVarFp.pricesGetLatest(tokenPair, interval, options).then((request) => request(axios, basePath));
         },
         /**
          * 
-         * @param {string} token 
+         * @param {string} tokenPair 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        pricesRemove(token: string, options?: any): AxiosPromise<number> {
-            return localVarFp.pricesRemove(token, options).then((request) => request(axios, basePath));
+        pricesRemove(tokenPair: string, options?: any): AxiosPromise<string> {
+            return localVarFp.pricesRemove(tokenPair, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -892,25 +1006,27 @@ export const PricesApiFactory = function (configuration?: Configuration, basePat
 export class PricesApi extends BaseAPI {
     /**
      * 
-     * @param {number} port 
-     * @param {string} token 
+     * @param {string} tokenPair 
      * @param {Array<string>} intervals 
+     * @param {ConfigConnectionInputModel} configConnectionInputModel 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof PricesApi
      */
-    public pricesAdd(port: number, token: string, intervals: Array<string>, options?: AxiosRequestConfig) {
-        return PricesApiFp(this.configuration).pricesAdd(port, token, intervals, options).then((request) => request(this.axios, this.basePath));
+    public pricesAdd(tokenPair: string, intervals: Array<string>, configConnectionInputModel: ConfigConnectionInputModel, options?: AxiosRequestConfig) {
+        return PricesApiFp(this.configuration).pricesAdd(tokenPair, intervals, configConnectionInputModel, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * 
+     * @param {string} tokenPair 
+     * @param {string} interval 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof PricesApi
      */
-    public pricesGetAllPorts(options?: AxiosRequestConfig) {
-        return PricesApiFp(this.configuration).pricesGetAllPorts(options).then((request) => request(this.axios, this.basePath));
+    public pricesGetAll(tokenPair: string, interval: string, options?: AxiosRequestConfig) {
+        return PricesApiFp(this.configuration).pricesGetAll(tokenPair, interval, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -925,27 +1041,27 @@ export class PricesApi extends BaseAPI {
 
     /**
      * 
-     * @param {string} token 
+     * @param {string} tokenPair 
+     * @param {string} interval 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof PricesApi
      */
-    public pricesGetPort(token: string, options?: AxiosRequestConfig) {
-        return PricesApiFp(this.configuration).pricesGetPort(token, options).then((request) => request(this.axios, this.basePath));
+    public pricesGetLatest(tokenPair: string, interval: string, options?: AxiosRequestConfig) {
+        return PricesApiFp(this.configuration).pricesGetLatest(tokenPair, interval, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * 
-     * @param {string} token 
+     * @param {string} tokenPair 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof PricesApi
      */
-    public pricesRemove(token: string, options?: AxiosRequestConfig) {
-        return PricesApiFp(this.configuration).pricesRemove(token, options).then((request) => request(this.axios, this.basePath));
+    public pricesRemove(tokenPair: string, options?: AxiosRequestConfig) {
+        return PricesApiFp(this.configuration).pricesRemove(tokenPair, options).then((request) => request(this.axios, this.basePath));
     }
 }
-
 
 
 /**
@@ -995,11 +1111,23 @@ export const SignalsApiAxiosParamCreator = function (configuration?: Configurati
         },
         /**
          * 
+         * @param {string} id 
+         * @param {string} tokenPair 
+         * @param {string} interval 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        signalsGetAllPorts: async (options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            const localVarPath = `/signals/allPorts`;
+        signalsGetAll: async (id: string, tokenPair: string, interval: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('signalsGetAll', 'id', id)
+            // verify required parameter 'tokenPair' is not null or undefined
+            assertParamExists('signalsGetAll', 'tokenPair', tokenPair)
+            // verify required parameter 'interval' is not null or undefined
+            assertParamExists('signalsGetAll', 'interval', interval)
+            const localVarPath = `/signals/{id}/{tokenPair}/{interval}/all`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)))
+                .replace(`{${"tokenPair"}}`, encodeURIComponent(String(tokenPair)))
+                .replace(`{${"interval"}}`, encodeURIComponent(String(interval)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -1054,14 +1182,22 @@ export const SignalsApiAxiosParamCreator = function (configuration?: Configurati
         /**
          * 
          * @param {string} id 
+         * @param {string} tokenPair 
+         * @param {string} interval 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        signalsGetPort: async (id: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        signalsGetLatest: async (id: string, tokenPair: string, interval: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
-            assertParamExists('signalsGetPort', 'id', id)
-            const localVarPath = `/signals/{id}/port`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            assertParamExists('signalsGetLatest', 'id', id)
+            // verify required parameter 'tokenPair' is not null or undefined
+            assertParamExists('signalsGetLatest', 'tokenPair', tokenPair)
+            // verify required parameter 'interval' is not null or undefined
+            assertParamExists('signalsGetLatest', 'interval', interval)
+            const localVarPath = `/signals/{id}/{tokenPair}/{interval}/latest`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)))
+                .replace(`{${"tokenPair"}}`, encodeURIComponent(String(tokenPair)))
+                .replace(`{${"interval"}}`, encodeURIComponent(String(interval)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -1173,11 +1309,14 @@ export const SignalsApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
+         * @param {string} id 
+         * @param {string} tokenPair 
+         * @param {string} interval 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async signalsGetAllPorts(options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<number>>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.signalsGetAllPorts(options);
+        async signalsGetAll(id: string, tokenPair: string, interval: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<SignalModel>>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.signalsGetAll(id, tokenPair, interval, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -1192,11 +1331,13 @@ export const SignalsApiFp = function(configuration?: Configuration) {
         /**
          * 
          * @param {string} id 
+         * @param {string} tokenPair 
+         * @param {string} interval 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async signalsGetPort(id: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<number>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.signalsGetPort(id, options);
+        async signalsGetLatest(id: string, tokenPair: string, interval: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<SignalModel>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.signalsGetLatest(id, tokenPair, interval, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -1241,11 +1382,14 @@ export const SignalsApiFactory = function (configuration?: Configuration, basePa
         },
         /**
          * 
+         * @param {string} id 
+         * @param {string} tokenPair 
+         * @param {string} interval 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        signalsGetAllPorts(options?: any): AxiosPromise<Array<number>> {
-            return localVarFp.signalsGetAllPorts(options).then((request) => request(axios, basePath));
+        signalsGetAll(id: string, tokenPair: string, interval: string, options?: any): AxiosPromise<Array<SignalModel>> {
+            return localVarFp.signalsGetAll(id, tokenPair, interval, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -1258,11 +1402,13 @@ export const SignalsApiFactory = function (configuration?: Configuration, basePa
         /**
          * 
          * @param {string} id 
+         * @param {string} tokenPair 
+         * @param {string} interval 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        signalsGetPort(id: string, options?: any): AxiosPromise<number> {
-            return localVarFp.signalsGetPort(id, options).then((request) => request(axios, basePath));
+        signalsGetLatest(id: string, tokenPair: string, interval: string, options?: any): AxiosPromise<SignalModel> {
+            return localVarFp.signalsGetLatest(id, tokenPair, interval, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -1306,12 +1452,15 @@ export class SignalsApi extends BaseAPI {
 
     /**
      * 
+     * @param {string} id 
+     * @param {string} tokenPair 
+     * @param {string} interval 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof SignalsApi
      */
-    public signalsGetAllPorts(options?: AxiosRequestConfig) {
-        return SignalsApiFp(this.configuration).signalsGetAllPorts(options).then((request) => request(this.axios, this.basePath));
+    public signalsGetAll(id: string, tokenPair: string, interval: string, options?: AxiosRequestConfig) {
+        return SignalsApiFp(this.configuration).signalsGetAll(id, tokenPair, interval, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -1327,12 +1476,14 @@ export class SignalsApi extends BaseAPI {
     /**
      * 
      * @param {string} id 
+     * @param {string} tokenPair 
+     * @param {string} interval 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof SignalsApi
      */
-    public signalsGetPort(id: string, options?: AxiosRequestConfig) {
-        return SignalsApiFp(this.configuration).signalsGetPort(id, options).then((request) => request(this.axios, this.basePath));
+    public signalsGetLatest(id: string, tokenPair: string, interval: string, options?: AxiosRequestConfig) {
+        return SignalsApiFp(this.configuration).signalsGetLatest(id, tokenPair, interval, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -1357,7 +1508,6 @@ export class SignalsApi extends BaseAPI {
         return SignalsApiFp(this.configuration).signalsRemove(id, options).then((request) => request(this.axios, this.basePath));
     }
 }
-
 
 
 /**
@@ -1666,7 +1816,6 @@ export class TradingApi extends BaseAPI {
 }
 
 
-
 /**
  * TransactionApi - axios parameter creator
  * @export
@@ -1746,7 +1895,7 @@ export const TransactionApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async transactionGetWalletFree(options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+        async transactionGetWalletFree(options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<WalletModel>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.transactionGetWalletFree(options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
@@ -1755,7 +1904,7 @@ export const TransactionApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async transactionGetWalletLocked(options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+        async transactionGetWalletLocked(options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<WalletModel>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.transactionGetWalletLocked(options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
@@ -1774,7 +1923,7 @@ export const TransactionApiFactory = function (configuration?: Configuration, ba
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        transactionGetWalletFree(options?: any): AxiosPromise<void> {
+        transactionGetWalletFree(options?: any): AxiosPromise<WalletModel> {
             return localVarFp.transactionGetWalletFree(options).then((request) => request(axios, basePath));
         },
         /**
@@ -1782,7 +1931,7 @@ export const TransactionApiFactory = function (configuration?: Configuration, ba
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        transactionGetWalletLocked(options?: any): AxiosPromise<void> {
+        transactionGetWalletLocked(options?: any): AxiosPromise<WalletModel> {
             return localVarFp.transactionGetWalletLocked(options).then((request) => request(axios, basePath));
         },
     };
@@ -1815,6 +1964,5 @@ export class TransactionApi extends BaseAPI {
         return TransactionApiFp(this.configuration).transactionGetWalletLocked(options).then((request) => request(this.axios, this.basePath));
     }
 }
-
 
 
