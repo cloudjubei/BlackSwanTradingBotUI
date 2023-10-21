@@ -11,8 +11,8 @@ interface Props {
 
 export const TradingSetupInfo = ({ tradingSetup, clickConfig }: Props) =>
 {
-  const startingAmount = tradingSetup.startingSecondAmount + (MathUtils.MultiplyNumbers(tradingSetup.currentPriceAmount, tradingSetup.startingFirstAmount))
-  const currentAmount = tradingSetup.secondAmount + (MathUtils.MultiplyNumbers(tradingSetup.currentPriceAmount, tradingSetup.firstAmount))
+  const startingAmount = MathUtils.AddNumbers(tradingSetup.startingSecondAmount, (MathUtils.MultiplyNumbers(tradingSetup.currentPriceAmount, tradingSetup.startingFirstAmount)))
+  const currentAmount = MathUtils.AddNumbers(tradingSetup.secondAmount, (MathUtils.MultiplyNumbers(tradingSetup.currentPriceAmount, tradingSetup.firstAmount)))
   const profitAmount = MathUtils.SubtractNumbers(currentAmount, startingAmount)
   const isZero = MathUtils.IsZero(profitAmount)
   const isPositiveProfit = MathUtils.IsBiggerThanZero(profitAmount)
