@@ -262,7 +262,7 @@ const Page: React.FC<Props> = ({ tradingSetup, onCreate, onDelete }: Props) => {
 					<TextInput
 						id='limitOrderCancelDueToChecksElapsed-input'
 						formField='limitOrderCancelDueToChecksElapsed'
-						formValidation={{ required: true, min: 10000, valueAsNumber: true }}
+						formValidation={{ required: true, min: 1, max: 10000, valueAsNumber: true }}
 						label='Ticks to cancel'
 						helperText='1 tick is roughly 1 second, but it could be more'
 						disabled={isViewOnly}
