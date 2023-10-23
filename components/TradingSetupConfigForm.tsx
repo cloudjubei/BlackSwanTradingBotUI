@@ -87,6 +87,9 @@ const Page: React.FC<Props> = ({ tradingSetup, availableSignals, availableInterv
             interval: "1m",
             signal: "bollingerLowWithRSI30Oversold",
 
+			useTakeProfit: true,
+			useStopLoss: false,
+			useTrailingTakeProfit: false,
             use_LimitOrders: true,
             limitOrderBuyOffset: 0,
             limitOrderSellOffset: 0,
