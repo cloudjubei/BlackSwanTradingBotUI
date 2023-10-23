@@ -5,7 +5,16 @@ import TradingSetupConfigForm, { TradingSetupConfigFormData } from '../component
 import Modal from '../components/Modal/Modal'
 import { WalletsInfo } from '../components/WalletsInfo'
 
-const UPDATE_TIME = 5000
+const UPDATE_TIME = 1000
+
+const AVAILABLE_SIGNAL_IDS = [
+	"bollingerHighSignal", "bollingerLowSignal", 
+	"rsi30Overbought", "rsi30Oversold",
+	"rsi9Overbought", "rsi9Oversold",
+	"bollingerHighWithRSI30Overbought", "bollingerLowWithRSI30Oversold"
+]
+
+const AVAILABLE_INTERVALS = [	"1s", "1m", "5m", "15m", "1h", "1d"]
 
 export default function Home()
 {
@@ -98,7 +107,7 @@ export default function Home()
                 <button className="menu-button" onClick={clickAddTradingSetup}>{"Add Setup"}</button>
             </div>
             <Modal show={configTradingSetupShowing} clickClose={() => setConfigTradingSetupShowing(false)}>
-                <TradingSetupConfigForm tradingSetup={selectedTradingSetupShowing} onCreate={clickTradingSetupAdded}  onDelete={clickTradingSetupDelete} />
+                <TradingSetupConfigForm tradingSetup={selectedTradingSetupShowing} availableSignals={AVAILABLE_SIGNAL_IDS} availableIntervals={AVAILABLE_INTERVALS} onCreate={clickTradingSetupAdded}  onDelete={clickTradingSetupDelete} />
             </Modal>
         </div>
     )

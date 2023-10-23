@@ -460,6 +460,12 @@ export interface TradingTransactionModel {
      * @type {string}
      * @memberof TradingTransactionModel
      */
+    'wantedPriceAmount': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof TradingTransactionModel
+     */
     'transactionId': string;
     /**
      * 

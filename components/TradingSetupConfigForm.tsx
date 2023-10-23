@@ -1,6 +1,6 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import { Cancel, DeleteForever, Save } from '@mui/icons-material'
-import { Button, Checkbox, FormControl, FormControlLabel, TextField } from '@mui/material'
+import { Button, Checkbox, FormControl, FormControlLabel, InputLabel, MenuItem, Select, TextField } from '@mui/material'
 import { FormProvider, SubmitHandler, useForm } from 'react-hook-form'
 import { TextInput } from './Input/TextInput'
 import { TradingSetupConfigModel, TradingSetupModel, TradingStopLossConfigModel, TradingTakeProfitConfigModel, TradingTakeProfitTrailingStopConfigModel } from '../src/api/gen'
@@ -36,11 +36,13 @@ export interface TradingSetupConfigFormData
 
 export type Props = {
     tradingSetup?: TradingSetupModel
+	availableSignals: string[]
+	availableIntervals: string[]
 	onCreate: (id: string, startingFirstAmount: string, startingSecondAmount: string, tradingSetup: TradingSetupConfigModel) => void
 	onDelete: (tradingSetup: TradingSetupModel) => void
 }
 
-const Page: React.FC<Props> = ({ tradingSetup, onCreate, onDelete }: Props) => {
+const Page: React.FC<Props> = ({ tradingSetup, availableSignals, availableIntervals, onCreate, onDelete }: Props) => {
     const onSubmit = (formData: TradingSetupConfigFormData) => {
         onCreate(
             formData.id,
@@ -91,7 +93,7 @@ const Page: React.FC<Props> = ({ tradingSetup, onCreate, onDelete }: Props) => {
             useStopLoss: tradingSetup?.config.stopLoss !== undefined,
             stopLossPercentage: tradingSetup?.config.stopLoss?.percentage,
 
-            use_LimitOrders: tradingSetup?.config.useLimitOrders,
+            use_LimitOrders: tradingSetup?.config.useLimitOrders ?? true,
             limitOrderBuyOffset: 0,
             limitOrderSellOffset: 0,
             limitOrderCancelDueToChecksElapsed: 60,
@@ -105,28 +107,45 @@ const Page: React.FC<Props> = ({ tradingSetup, onCreate, onDelete }: Props) => {
 	const useStopLoss = formMethods.watch('useStopLoss')
 	const useLimitOrders = formMethods.watch('use_LimitOrders')
 
+	const signalIdItems = useMemo(() => {
+		return (availableSignals.map(signal => {
+			return <MenuItem value={signal}>{signal}</MenuItem>
+		}))
+	}, [availableSignals])
+	const intervalItems = useMemo(() => {
+		return (availableIntervals.map(interval => {
+			return <MenuItem value={interval}>{interval}</MenuItem>
+		}))
+	}, [availableIntervals])
+
 	return (
 		<FormProvider {...formMethods}>
 			<FormControl fullWidth id='trading-setup-config-form' component='form' onSubmit={formMethods.handleSubmit(onSubmit)}>
 				
 				<div className='input-group'>
 					<TextInput
+						className='input-item'
 						id='id-input'
 						formField='id'
 						formValidation={{ required: { value: true, message: 'A setup name is required!'} }}
 						label='Name of the setup'
 						disabled={isViewOnly}
 					/>
-					<TextInput
+					<TextField
+						className='input-item'
 						id='signal-input'
-						formField='signal'
-						formValidation={{ required: { value: true, message: 'A signal id is required!'} }}
-						label='ID of the signal'
-						disabled={isViewOnly}
-					/>
+						{...formMethods.register('signal', {
+							required: 'A signal id is required!',
+						})}
+						select
+						label="ID of the signal"
+						>
+						{signalIdItems}
+					</TextField>
 				</div>
 				<div className='input-group'>
 					<TextInput
+						className='input-item'
 						id='firstToken-input'
 						formField='firstToken'
 						placeholder='BTC | ETH | XRP'
@@ -135,6 +154,7 @@ const Page: React.FC<Props> = ({ tradingSetup, onCreate, onDelete }: Props) => {
 						disabled={isViewOnly}
 					/>
 					<TextInput
+						className='input-item'
 						id='secondToken-input'
 						formField='secondToken'
 						placeholder='FDUSD | USDT'
@@ -145,6 +165,7 @@ const Page: React.FC<Props> = ({ tradingSetup, onCreate, onDelete }: Props) => {
 				</div>
 				<div className='input-group'>
 					<TextInput
+						className='input-item'
 						id='startingFirstAmount-input'
 						formField='startingFirstAmount'
 						formValidation={{ required: true, min: 0.0, valueAsNumber: true }}
@@ -153,6 +174,7 @@ const Page: React.FC<Props> = ({ tradingSetup, onCreate, onDelete }: Props) => {
 						disabled={isViewOnly}
 					/>
 					<TextInput
+						className='input-item'
 						id='startingSecondAmount-input'
 						formField='startingSecondAmount'
 						formValidation={{ required: true, min: 0.0, valueAsNumber: true }}
@@ -162,17 +184,20 @@ const Page: React.FC<Props> = ({ tradingSetup, onCreate, onDelete }: Props) => {
 					/>
 				</div>
 				<div className='input-group'>
-					<TextInput
+					<TextField
+						className='input-item'
 						id='interval-input'
-						formField='interval'
-						placeholder='1s'
-						formValidation={{ required: { value: true, message: 'An interval is required!'} }}
-						label={'Interval'}
-						helperText='1s | 1m | 5m | 15m | 1h | 1d'
-						disabled={isViewOnly}
-					/>
-
+						{...formMethods.register('interval', {
+							required: 'An interval is required!',
+						})}
+						select
+						label="Interval"
+						>
+						{intervalItems}
+					</TextField>
+					
 					<TextInput
+						className='input-item'
 						id='terminationPercentageLoss-input'
 						formField='terminationPercentageLoss'
 						formValidation={{ min: 0.0, valueAsNumber: true }}
@@ -188,6 +213,7 @@ const Page: React.FC<Props> = ({ tradingSetup, onCreate, onDelete }: Props) => {
 				</div>
 				{useTakeProfit && <div className='input-group'>
 					<TextInput
+						className='input-item'
 						id='takeProfitPercentage-input'
 						formField='takeProfitPercentage'
 						formValidation={{ required: useTakeProfit, min: 0.01, valueAsNumber: true }}
@@ -204,6 +230,7 @@ const Page: React.FC<Props> = ({ tradingSetup, onCreate, onDelete }: Props) => {
 				{useTakeProfit && useTrailingTakeProfit && 
 				<div className='input-group'>
 					<TextInput
+						className='input-item'
 						id='takeProfitTrailingDeltaPercentage-input'
 						formField='takeProfitTrailingDeltaPercentage'
 						formValidation={{ required: useTakeProfit && useTrailingTakeProfit, min: 0.01, valueAsNumber: true }}
@@ -213,6 +240,7 @@ const Page: React.FC<Props> = ({ tradingSetup, onCreate, onDelete }: Props) => {
 						disabled={isViewOnly}
 					/>
 					<TextInput
+						className='input-item'
 						id='takeProfitTrailingHardLimitPercentage-input'
 						formField='takeProfitTrailingHardLimitPercentage'
 						formValidation={{ min: 0.01, valueAsNumber: true }}
@@ -228,6 +256,7 @@ const Page: React.FC<Props> = ({ tradingSetup, onCreate, onDelete }: Props) => {
 				</div>
 				{useStopLoss && <div className='input-group'>
 					<TextInput
+						className='input-item'
 						id='stopLossPercentage-input'
 						formField='stopLossPercentage'
 						formValidation={{ required: useStopLoss, min: 0.01, valueAsNumber: true }}
@@ -242,6 +271,7 @@ const Page: React.FC<Props> = ({ tradingSetup, onCreate, onDelete }: Props) => {
 				</div>
 				{useLimitOrders && <div className='input-group'>
 					<TextInput
+						className='input-item'
 						id='limitOrderBuyOffset-input'
 						formField='limitOrderBuyOffset'
 						formValidation={{ required: true, valueAsNumber: true }}
@@ -250,6 +280,7 @@ const Page: React.FC<Props> = ({ tradingSetup, onCreate, onDelete }: Props) => {
 						disabled={isViewOnly}
 					/>
 					<TextInput
+						className='input-item'
 						id='limitOrderSellOffset-input'
 						formField='limitOrderSellOffset'
 						formValidation={{ required: true, valueAsNumber: true }}
@@ -260,6 +291,7 @@ const Page: React.FC<Props> = ({ tradingSetup, onCreate, onDelete }: Props) => {
 				</div>}
 				{useLimitOrders && <div className='input-group'>
 					<TextInput
+						className='input-item'
 						id='limitOrderCancelDueToChecksElapsed-input'
 						formField='limitOrderCancelDueToChecksElapsed'
 						formValidation={{ required: true, min: 1, max: 10000, valueAsNumber: true }}
@@ -268,6 +300,7 @@ const Page: React.FC<Props> = ({ tradingSetup, onCreate, onDelete }: Props) => {
 						disabled={isViewOnly}
 					/>
 					<TextInput
+						className='input-item'
 						id='limitOrderCancelDueToTimeElapsed-input'
 						formField='limitOrderCancelDueToTimeElapsed'
 						formValidation={{ min: 0.0, valueAsNumber: true }}
@@ -276,6 +309,7 @@ const Page: React.FC<Props> = ({ tradingSetup, onCreate, onDelete }: Props) => {
 						disabled={isViewOnly}
 					/>
 					<TextInput
+						className='input-item'
 						id='limitOrderCancelDueToPriceDivergence-input'
 						formField='limitOrderCancelDueToPriceDivergence'
 						formValidation={{ min: 0.0, valueAsNumber: true }}
