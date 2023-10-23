@@ -51,6 +51,13 @@ export default function Home()
         update().catch(console.error)
     }, [time])
 
+    const clickConvertWalletBTC = () => {
+        const convert = async () => {
+            const walletFree = await transactionApi.transactionConvertAllBTC()
+            setWalletsFree(walletFree.data)
+        }
+        convert().catch(console.error)
+    }
     const clickShowTradingSetupConfig = (tradingSetup: TradingSetupModel) => {
         setSelectedTradingSetupShowing(tradingSetup)
         setConfigTradingSetupShowing(true)
@@ -68,6 +75,9 @@ export default function Home()
         create().then(() =>
             setSelectedTradingSetupShowing(undefined)
         ).catch(console.error)
+    }
+    const clickTradingSetupSave = (formData: TradingSetupConfigFormData) => {
+        console.log("TODO")
     }
     const clickTradingSetupDelete = (tradingSetup: TradingSetupModel) => {
         setConfigTradingSetupShowing(false)
@@ -100,14 +110,15 @@ export default function Home()
     
     return (
         <div>
-            <h1> Trading Bot </h1>
+            <h1> Binance Trading Module </h1>
             {wallestView}
             {tradingSetupsViews}
             <div className="menu">
+                <button className="menu-button" onClick={clickConvertWalletBTC}>{"Convert all BTC"}</button>
                 <button className="menu-button" onClick={clickAddTradingSetup}>{"Add Setup"}</button>
             </div>
             <Modal show={configTradingSetupShowing} clickClose={() => setConfigTradingSetupShowing(false)}>
-                <TradingSetupConfigForm tradingSetup={selectedTradingSetupShowing} availableSignals={AVAILABLE_SIGNAL_IDS} availableIntervals={AVAILABLE_INTERVALS} onCreate={clickTradingSetupAdded}  onDelete={clickTradingSetupDelete} />
+                <TradingSetupConfigForm tradingSetup={selectedTradingSetupShowing} availableSignals={AVAILABLE_SIGNAL_IDS} availableIntervals={AVAILABLE_INTERVALS} onCreate={clickTradingSetupAdded} onSave={clickTradingSetupSave} onDelete={clickTradingSetupDelete} />
             </Modal>
         </div>
     )

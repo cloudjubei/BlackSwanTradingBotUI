@@ -13,13 +13,15 @@
  */
 
 
-import { Configuration } from './configuration';
-import globalAxios, { AxiosPromise, AxiosInstance, AxiosRequestConfig } from 'axios';
+import type { Configuration } from './configuration';
+import type { AxiosPromise, AxiosInstance, AxiosRequestConfig } from 'axios';
+import globalAxios from 'axios';
 // Some imports not used depending on template conditions
 // @ts-ignore
 import { DUMMY_BASE_URL, assertParamExists, setApiKeyToObject, setBasicAuthToObject, setBearerAuthToObject, setOAuthToObject, setSearchParams, serializeDataIfNeeded, toPathString, createRequestFunction } from './common';
+import type { RequestArgs } from './base';
 // @ts-ignore
-import { BASE_PATH, COLLECTION_FORMATS, RequestArgs, BaseAPI, RequiredError } from './base';
+import { BASE_PATH, COLLECTION_FORMATS, BaseAPI, RequiredError } from './base';
 
 /**
  * 
@@ -46,6 +48,18 @@ export interface ConfigConnectionInputModel {
  * @interface ConfigModel
  */
 export interface ConfigModel {
+    /**
+     * 
+     * @type {string}
+     * @memberof ConfigModel
+     */
+    'default_host': string;
+    /**
+     * 
+     * @type {number}
+     * @memberof ConfigModel
+     */
+    'socket_timeout': number;
     /**
      * 
      * @type {Array<string>}
@@ -300,6 +314,12 @@ export interface TradingSetupModel {
     'secondAmount': string;
     /**
      * 
+     * @type {number}
+     * @memberof TradingSetupModel
+     */
+    'lastUpdate': number;
+    /**
+     * 
      * @type {string}
      * @memberof TradingSetupModel
      */
@@ -342,11 +362,13 @@ export interface TradingSetupModel {
     'transactions': Array<TradingTransactionModel>;
     /**
      * 
-     * @type {object}
+     * @type {{ [key: string]: TradingTransactionModel; }}
      * @memberof TradingSetupModel
      */
-    'openTransactions': object;
+    'openTransactions': { [key: string]: TradingTransactionModel; };
 }
+
+
 /**
  * 
  * @export
@@ -454,13 +476,13 @@ export interface TradingTransactionModel {
      * @type {string}
      * @memberof TradingTransactionModel
      */
-    'priceAmount': string;
+    'wantedPriceAmount': string;
     /**
      * 
      * @type {string}
      * @memberof TradingTransactionModel
      */
-    'wantedPriceAmount': string;
+    'priceAmount': string;
     /**
      * 
      * @type {string}
@@ -600,6 +622,7 @@ export class DefaultApi extends BaseAPI {
 }
 
 
+
 /**
  * IdentityApi - axios parameter creator
  * @export
@@ -692,6 +715,7 @@ export class IdentityApi extends BaseAPI {
         return IdentityApiFp(this.configuration).identityGetConfig(options).then((request) => request(this.axios, this.basePath));
     }
 }
+
 
 
 /**
@@ -1068,6 +1092,7 @@ export class PricesApi extends BaseAPI {
         return PricesApiFp(this.configuration).pricesRemove(tokenPair, options).then((request) => request(this.axios, this.basePath));
     }
 }
+
 
 
 /**
@@ -1516,6 +1541,7 @@ export class SignalsApi extends BaseAPI {
 }
 
 
+
 /**
  * TradingApi - axios parameter creator
  * @export
@@ -1822,12 +1848,42 @@ export class TradingApi extends BaseAPI {
 }
 
 
+
 /**
  * TransactionApi - axios parameter creator
  * @export
  */
 export const TransactionApiAxiosParamCreator = function (configuration?: Configuration) {
     return {
+        /**
+         * 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        transactionConvertAllBTC: async (options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/transactions/convertAllBTC`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
         /**
          * 
          * @param {*} [options] Override http request option.
@@ -1901,6 +1957,15 @@ export const TransactionApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
+        async transactionConvertAllBTC(options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<WalletModel>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.transactionConvertAllBTC(options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
         async transactionGetWalletFree(options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<WalletModel>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.transactionGetWalletFree(options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
@@ -1924,6 +1989,14 @@ export const TransactionApiFp = function(configuration?: Configuration) {
 export const TransactionApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
     const localVarFp = TransactionApiFp(configuration)
     return {
+        /**
+         * 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        transactionConvertAllBTC(options?: any): AxiosPromise<WalletModel> {
+            return localVarFp.transactionConvertAllBTC(options).then((request) => request(axios, basePath));
+        },
         /**
          * 
          * @param {*} [options] Override http request option.
@@ -1956,6 +2029,16 @@ export class TransactionApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof TransactionApi
      */
+    public transactionConvertAllBTC(options?: AxiosRequestConfig) {
+        return TransactionApiFp(this.configuration).transactionConvertAllBTC(options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof TransactionApi
+     */
     public transactionGetWalletFree(options?: AxiosRequestConfig) {
         return TransactionApiFp(this.configuration).transactionGetWalletFree(options).then((request) => request(this.axios, this.basePath));
     }
@@ -1970,5 +2053,6 @@ export class TransactionApi extends BaseAPI {
         return TransactionApiFp(this.configuration).transactionGetWalletLocked(options).then((request) => request(this.axios, this.basePath));
     }
 }
+
 
 

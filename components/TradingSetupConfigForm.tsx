@@ -1,9 +1,10 @@
-import React, { useMemo } from 'react'
+import React, { useEffect, useMemo } from 'react'
 import { Cancel, DeleteForever, Save } from '@mui/icons-material'
 import { Button, Checkbox, FormControl, FormControlLabel, InputLabel, MenuItem, Select, TextField } from '@mui/material'
 import { FormProvider, SubmitHandler, useForm } from 'react-hook-form'
 import { TextInput } from './Input/TextInput'
 import { TradingSetupConfigModel, TradingSetupModel, TradingStopLossConfigModel, TradingTakeProfitConfigModel, TradingTakeProfitTrailingStopConfigModel } from '../src/api/gen'
+import MathUtils from '../src/commons/lib/mathUtils'
 
 export interface TradingSetupConfigFormData
 {
@@ -39,11 +40,16 @@ export type Props = {
 	availableSignals: string[]
 	availableIntervals: string[]
 	onCreate: (id: string, startingFirstAmount: string, startingSecondAmount: string, tradingSetup: TradingSetupConfigModel) => void
+	onSave: (formData: TradingSetupConfigFormData) => void
 	onDelete: (tradingSetup: TradingSetupModel) => void
 }
 
-const Page: React.FC<Props> = ({ tradingSetup, availableSignals, availableIntervals, onCreate, onDelete }: Props) => {
+const Page: React.FC<Props> = ({ tradingSetup, availableSignals, availableIntervals, onCreate, onSave, onDelete }: Props) => {
     const onSubmit = (formData: TradingSetupConfigFormData) => {
+		if (isViewOnly){
+			onSave(formData)
+			return
+		}
         onCreate(
             formData.id,
             "" + formData.startingFirstAmount,
@@ -74,38 +80,47 @@ const Page: React.FC<Props> = ({ tradingSetup, availableSignals, availableInterv
     const isViewOnly = tradingSetup !== undefined && tradingSetup !== null
 	const formMethods = useForm<TradingSetupConfigFormData>({
 		defaultValues: {
-            id: tradingSetup?.id,
-            startingFirstAmount: parseFloat(tradingSetup?.startingFirstAmount ?? "0"),
-            startingSecondAmount: parseFloat(tradingSetup?.startingSecondAmount ?? "0"),
+            startingFirstAmount: 0,
+            startingSecondAmount: 0,
             firstToken: "BTC",
             secondToken: "FDUSD",
             interval: "1m",
             signal: "bollingerLowWithRSI30Oversold",
 
-            terminationPercentageLoss: undefined,
-
-            useTakeProfit: tradingSetup?.config.takeProfit !== undefined,
-            takeProfitPercentage: tradingSetup?.config.takeProfit?.percentage,
-            useTrailingTakeProfit: tradingSetup?.config.takeProfit?.trailingStop !== undefined,
-            takeProfitTrailingDeltaPercentage: tradingSetup?.config.takeProfit?.trailingStop?.deltaPercentage,
-            takeProfitTrailingHardLimitPercentage: tradingSetup?.config.takeProfit?.trailingStop?.hardLimitPercentage,
-
-            useStopLoss: tradingSetup?.config.stopLoss !== undefined,
-            stopLossPercentage: tradingSetup?.config.stopLoss?.percentage,
-
-            use_LimitOrders: tradingSetup?.config.useLimitOrders ?? true,
+            use_LimitOrders: true,
             limitOrderBuyOffset: 0,
             limitOrderSellOffset: 0,
             limitOrderCancelDueToChecksElapsed: 60,
             limitOrderCancelDueToTimeElapsed:  undefined,
             limitOrderCancelDueToPriceDivergence: undefined,
-            ...tradingSetup?.config,
 		},
 	})
+
+	// const watchAllFields = formMethods.watch()
+
 	const useTakeProfit = formMethods.watch('useTakeProfit')
 	const useTrailingTakeProfit = formMethods.watch('useTrailingTakeProfit')
 	const useStopLoss = formMethods.watch('useStopLoss')
 	const useLimitOrders = formMethods.watch('use_LimitOrders')
+	const startingSecondAmount = formMethods.watch('startingSecondAmount')
+	const takeProfitPercentage = formMethods.watch('takeProfitPercentage')
+
+	const takeProfitPercentageInput = useMemo(() => {
+		if (!useTakeProfit) { return <></>}
+		const takeProfitAmount = (startingSecondAmount ?? 0) * (takeProfitPercentage ?? 0)
+		const label = 'TP Trigger %' + (useTakeProfit ? " - $" + takeProfitAmount : "")
+		return <div className='input-group'>
+			<TextInput
+				className='input-item'
+				id='takeProfitPercentage-input'
+				formField='takeProfitPercentage'
+				formValidation={{ required: useTakeProfit, min: 0.000001, valueAsNumber: true }}
+				placeholder='%15 == 0.15'
+				label={label}
+				helperText={useTrailingTakeProfit ?'Starts Trailing once amount goes over this threshold' : 'Sell once amount goes over this threshold'}
+			/>
+		</div>
+	}, [useTakeProfit, startingSecondAmount, takeProfitPercentage, useTrailingTakeProfit])
 
 	const signalIdItems = useMemo(() => {
 		return (availableSignals.map(signal => {
@@ -117,6 +132,32 @@ const Page: React.FC<Props> = ({ tradingSetup, availableSignals, availableInterv
 			return <MenuItem value={interval}>{interval}</MenuItem>
 		}))
 	}, [availableIntervals])
+
+
+
+	useEffect(() => {
+		console.log("useEffect tradingSetup")
+		if (tradingSetup){
+			formMethods.reset({
+				id: tradingSetup!.id,
+				startingFirstAmount: parseFloat(tradingSetup!.startingFirstAmount),
+				startingSecondAmount: parseFloat(tradingSetup!.startingSecondAmount),
+
+				useTakeProfit: tradingSetup!.config.takeProfit !== undefined,
+				takeProfitPercentage: tradingSetup!.config.takeProfit?.percentage,
+				useTrailingTakeProfit: tradingSetup!.config.takeProfit?.trailingStop !== undefined,
+				takeProfitTrailingDeltaPercentage: tradingSetup!.config.takeProfit?.trailingStop?.deltaPercentage,
+				takeProfitTrailingHardLimitPercentage: tradingSetup!.config.takeProfit?.trailingStop?.hardLimitPercentage,
+
+				useStopLoss: tradingSetup!.config.stopLoss !== undefined,
+				stopLossPercentage: tradingSetup!.config.stopLoss?.percentage,
+
+				use_LimitOrders: tradingSetup!.config.useLimitOrders,
+
+				...tradingSetup?.config,
+			})
+		}
+	 }, [tradingSetup])
 
 	return (
 		<FormProvider {...formMethods}>
@@ -204,25 +245,13 @@ const Page: React.FC<Props> = ({ tradingSetup, availableSignals, availableInterv
 						placeholder='%15 == 0.15'
 						label='Termination % loss'
 						helperText='% amount when setup is terminated'
-						disabled={isViewOnly}
 					/>
 				</div>
 
 				<div className='input-group'>
-                	<FormControlLabel control={<Checkbox />} label='Use Take Profit' onChange={(_, checked) => formMethods.setValue('useTakeProfit', checked)}/>
+                	<FormControlLabel control={<Checkbox />} label='Use Take Profit' checked={useTakeProfit} onChange={(_, checked) => formMethods.setValue('useTakeProfit', checked)}/>
 				</div>
-				{useTakeProfit && <div className='input-group'>
-					<TextInput
-						className='input-item'
-						id='takeProfitPercentage-input'
-						formField='takeProfitPercentage'
-						formValidation={{ required: useTakeProfit, min: 0.01, valueAsNumber: true }}
-						placeholder='%15 == 0.15'
-						label='TP Trigger %'
-						helperText={useTrailingTakeProfit ?'Starts Trailing once amount goes over this threshold' : 'Sell once amount goes over this threshold'}
-						disabled={isViewOnly}
-					/>
-				</div>}
+				{takeProfitPercentageInput}
                 {useTakeProfit && 
 				<div className='input-group'>
 					<FormControlLabel control={<Checkbox />} label='Use Trailing TP' checked={useTrailingTakeProfit} onChange={(_, checked) => formMethods.setValue('useTrailingTakeProfit', checked)}/>
@@ -233,21 +262,19 @@ const Page: React.FC<Props> = ({ tradingSetup, availableSignals, availableInterv
 						className='input-item'
 						id='takeProfitTrailingDeltaPercentage-input'
 						formField='takeProfitTrailingDeltaPercentage'
-						formValidation={{ required: useTakeProfit && useTrailingTakeProfit, min: 0.01, valueAsNumber: true }}
+						formValidation={{ required: useTakeProfit && useTrailingTakeProfit, min: 0.000001, valueAsNumber: true }}
 						placeholder='%15 == 0.15'
 						label='Trailing Trigger %'
 						helperText='Bot sells once amount falls below this threshold since highest achieved'
-						disabled={isViewOnly}
 					/>
 					<TextInput
 						className='input-item'
 						id='takeProfitTrailingHardLimitPercentage-input'
 						formField='takeProfitTrailingHardLimitPercentage'
-						formValidation={{ min: 0.01, valueAsNumber: true }}
+						formValidation={{ min: 0.000001, valueAsNumber: true }}
 						placeholder='%15 == 0.15'
 						label='(Optional) Hard limit'
 						helperText='Threshold to sell once reached desired profit % (similar to original TP)'
-						disabled={isViewOnly}
 					/>
 				</div>}
 
@@ -259,10 +286,9 @@ const Page: React.FC<Props> = ({ tradingSetup, availableSignals, availableInterv
 						className='input-item'
 						id='stopLossPercentage-input'
 						formField='stopLossPercentage'
-						formValidation={{ required: useStopLoss, min: 0.01, valueAsNumber: true }}
+						formValidation={{ required: useStopLoss, min: 0.00001, valueAsNumber: true }}
 						placeholder='%15 == 0.15'
 						label='Percentage to trigger Stop Loss'
-						disabled={isViewOnly}
 					/>
 				</div>}
 
@@ -277,7 +303,6 @@ const Page: React.FC<Props> = ({ tradingSetup, availableSignals, availableInterv
 						formValidation={{ required: true, valueAsNumber: true }}
 						label='Offset % from buy amount'
 						helperText='E.g. 0.1, means the limit order sets the price 10% higher than current'
-						disabled={isViewOnly}
 					/>
 					<TextInput
 						className='input-item'
@@ -286,7 +311,6 @@ const Page: React.FC<Props> = ({ tradingSetup, availableSignals, availableInterv
 						formValidation={{ required: true, valueAsNumber: true }}
 						label='Offset % from sell amount'
 						helperText='E.g. -0.1, means the limit order sets the price 10% lower than current'
-						disabled={isViewOnly}
 					/>
 				</div>}
 				{useLimitOrders && <div className='input-group'>
@@ -297,7 +321,6 @@ const Page: React.FC<Props> = ({ tradingSetup, availableSignals, availableInterv
 						formValidation={{ required: true, min: 1, max: 10000, valueAsNumber: true }}
 						label='Ticks to cancel'
 						helperText='1 tick is roughly 1 second, but it could be more'
-						disabled={isViewOnly}
 					/>
 					<TextInput
 						className='input-item'
@@ -306,7 +329,6 @@ const Page: React.FC<Props> = ({ tradingSetup, availableSignals, availableInterv
 						formValidation={{ min: 0.0, valueAsNumber: true }}
 						label='Time in seconds to cancel'
 						helperText='e.g. 3600 == 1 hour'
-						disabled={isViewOnly}
 					/>
 					<TextInput
 						className='input-item'
@@ -315,13 +337,15 @@ const Page: React.FC<Props> = ({ tradingSetup, availableSignals, availableInterv
 						formValidation={{ min: 0.0, valueAsNumber: true }}
 						label='Price difference to cancel'
 						helperText='e.g. 50, means that if current price changes by 50 - order is canceled'
-						disabled={isViewOnly}
 					/>
 				</div>}
 			
 				<div className='input-group'>
 					{!isViewOnly && <Button startIcon={<Save />} type='submit' variant='contained' style={{ marginRight: '5px' }}>
 						Create Setup
+					</Button>}
+					{isViewOnly && <Button startIcon={<Save />} type='submit' variant='contained' style={{ marginRight: '5px' }}>
+						Save Setup
 					</Button>}
 					{isViewOnly && <Button startIcon={<DeleteForever />} variant='contained' style={{ marginRight: '5px' }} color='error' onClick={() => onDelete(tradingSetup)}>
 						Delete Setup
