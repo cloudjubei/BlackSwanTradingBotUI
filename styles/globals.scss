@@ -120,6 +120,17 @@
 			margin-top: 20px;
 			margin-bottom: 10px;
 		}
+
+		& > span, .section__header {
+			display: block;
+			font-size: 16px;
+			font-weight: 700;
+			letter-spacing: 6.5px;
+			text-align: start;
+			margin-left: 10px;
+			margin-top: 10px;
+			margin-bottom: 10px;
+		}
 	}
 	
 	&__item {
@@ -169,6 +180,14 @@
 	}
   }
   
+.logo{
+	width: 200px;
+	height: 80px;
+	position: fixed;
+	background-color: #090909;
+	top: 0;
+	left: 0;
+}
 .menu{
 	width: 100%;
 	position: fixed;

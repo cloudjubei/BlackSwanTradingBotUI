@@ -497,6 +497,12 @@ export interface TradingTransactionModel {
     'complete': boolean;
     /**
      * 
+     * @type {boolean}
+     * @memberof TradingTransactionModel
+     */
+    'canceled': boolean;
+    /**
+     * 
      * @type {number}
      * @memberof TradingTransactionModel
      */

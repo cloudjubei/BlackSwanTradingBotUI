@@ -110,6 +110,7 @@ export default function Home()
     
     return (
         <div>
+            <img className="logo" src='./logicxlogo.png' alt='logo' />
             <h1> Binance Trading Module </h1>
             {wallestView}
             {tradingSetupsViews}
