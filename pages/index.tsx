@@ -7,6 +7,9 @@ import { WalletsInfo } from '../components/WalletsInfo'
 
 const UPDATE_TIME = 1000
 
+const AVAILABLE_TOKEN_PAIRS = [
+    "BTCUSDT", "BTCFDUSD"
+]
 const AVAILABLE_SIGNAL_IDS = [
 	"bollingerHighSignal", "bollingerLowSignal", 
 	"rsi30Overbought", "rsi30Oversold",
@@ -14,7 +17,7 @@ const AVAILABLE_SIGNAL_IDS = [
 	"bollingerHighWithRSI30Overbought", "bollingerLowWithRSI30Oversold"
 ]
 
-const AVAILABLE_INTERVALS = [	"1s", "1m", "5m", "15m", "1h", "1d"]
+const AVAILABLE_INTERVALS = ["1s", "1m", "5m", "15m", "1h", "1d"]
 
 export default function Home()
 {
@@ -22,7 +25,8 @@ export default function Home()
     const [walletsFree, setWalletsFree] = useState<WalletModel>({ amounts: {}})
     const [walletsLocked, setWalletsLocked] = useState<WalletModel>({ amounts: {}})
     const [tradingSetups, setTradingSetups] = useState<TradingSetupModel[]>([])
-	// const pricesApi = useMemo(() => { return new PricesApi(new Configuration({ basePath: "http://localhost:3001"})) }, [])
+    const [prices, setPrices] = useState<{[tokenPair:string] : string}>({})
+	const pricesApi = useMemo(() => { return new PricesApi(new Configuration({ basePath: "http://localhost:3001"})) }, [])
 	// const signalsApi = useMemo(() => { return new SignalsApi(new Configuration({ basePath: "http://localhost:3001"})) }, [])
 	const tradingApi = useMemo(() => { return new TradingApi(new Configuration({ basePath: "http://localhost:3001"})) }, [])
 	const transactionApi = useMemo(() => { return new TransactionApi(new Configuration({ basePath: "http://localhost:3001"})) }, [])
@@ -43,6 +47,13 @@ export default function Home()
             setWalletsFree(walletFree.data)
             const walletLocked = await transactionApi.transactionGetWalletLocked()
             setWalletsLocked(walletLocked.data)
+
+            const newPrices : {[tokenPair:string] : string} = {}
+            for (const tokenPair of AVAILABLE_TOKEN_PAIRS) {
+                const price = await pricesApi.pricesGetLatest(tokenPair, '1s')
+                newPrices[tokenPair] = price.data.price
+            }
+            setPrices(newPrices)
 
             const setups = await tradingApi.tradingSetupsGetAll()
             setTradingSetups(setups.data)
@@ -119,7 +130,7 @@ export default function Home()
                 <button className="menu-button" onClick={clickAddTradingSetup}>{"Add Setup"}</button>
             </div>
             <Modal show={configTradingSetupShowing} clickClose={() => setConfigTradingSetupShowing(false)}>
-                <TradingSetupConfigForm tradingSetup={selectedTradingSetupShowing} availableSignals={AVAILABLE_SIGNAL_IDS} availableIntervals={AVAILABLE_INTERVALS} onCreate={clickTradingSetupAdded} onSave={clickTradingSetupSave} onDelete={clickTradingSetupDelete} />
+                <TradingSetupConfigForm tradingSetup={selectedTradingSetupShowing} prices={prices} availableSignals={AVAILABLE_SIGNAL_IDS} availableIntervals={AVAILABLE_INTERVALS} onCreate={clickTradingSetupAdded} onSave={clickTradingSetupSave} onDelete={clickTradingSetupDelete} />
             </Modal>
         </div>
     )

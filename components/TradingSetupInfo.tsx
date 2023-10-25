@@ -94,12 +94,12 @@ export const TradingSetupInfo = ({ tradingSetup, clickConfig }: Props) =>
       <article id={'firstToken'} className={`section__item`}>
         <CurrencyBitcoin/>
         <span className="section__item__name">{tradingSetup.config.firstToken} Amount:</span>
-        <span className="section__item__value">{tradingSetup.firstAmount}</span>
+        <span className="section__item__value">{MathUtils.Max("0", tradingSetup.firstAmount)}</span>
       </article>
       <article id={'secondToken'} className={`section__item`}>
         <Money/>
         <span className="section__item__name">{tradingSetup.config.secondToken} Amount:</span>
-        <span className="section__item__value">{MathUtils.Shorten(tradingSetup.secondAmount)}</span>
+        <span className="section__item__value">{MathUtils.Shorten(MathUtils.Max("0", tradingSetup.secondAmount))}</span>
       </article>
       <span className="section__header">Trades</span>
       <article id={'tradesBuy'} className={`section__item`}>

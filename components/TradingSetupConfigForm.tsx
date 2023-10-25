@@ -37,6 +37,7 @@ export interface TradingSetupConfigFormData
 
 export type Props = {
     tradingSetup?: TradingSetupModel
+	prices: {[tokenPair: string] : string}
 	availableSignals: string[]
 	availableIntervals: string[]
 	onCreate: (id: string, startingFirstAmount: string, startingSecondAmount: string, tradingSetup: TradingSetupConfigModel) => void
@@ -44,7 +45,7 @@ export type Props = {
 	onDelete: (tradingSetup: TradingSetupModel) => void
 }
 
-const Page: React.FC<Props> = ({ tradingSetup, availableSignals, availableIntervals, onCreate, onSave, onDelete }: Props) => {
+const Page: React.FC<Props> = ({ tradingSetup, prices, availableSignals, availableIntervals, onCreate, onSave, onDelete }: Props) => {
     const onSubmit = (formData: TradingSetupConfigFormData) => {
 		if (isViewOnly){
 			onSave(formData)
@@ -99,19 +100,27 @@ const Page: React.FC<Props> = ({ tradingSetup, availableSignals, availableInterv
 		},
 	})
 
-	// const watchAllFields = formMethods.watch()
-
+	const firstToken = formMethods.watch('firstToken')
+	const secondToken = formMethods.watch('secondToken')
+	const tokenPair = firstToken + secondToken
+	const currentPriceAmount = prices[tokenPair]
 	const useTakeProfit = formMethods.watch('useTakeProfit')
 	const useTrailingTakeProfit = formMethods.watch('useTrailingTakeProfit')
 	const useStopLoss = formMethods.watch('useStopLoss')
 	const useLimitOrders = formMethods.watch('use_LimitOrders')
 	const startingSecondAmount = formMethods.watch('startingSecondAmount')
 	const takeProfitPercentage = formMethods.watch('takeProfitPercentage')
+	const takeProfitTrailingDeltaPercentage = formMethods.watch('takeProfitTrailingDeltaPercentage')
 
 	const takeProfitPercentageInput = useMemo(() => {
 		if (!useTakeProfit) { return <></>}
-		const takeProfitAmount = (startingSecondAmount ?? 0) * (takeProfitPercentage ?? 0)
+		const takeProfitAmount = MathUtils.Shorten("" + (startingSecondAmount ?? 0) * (takeProfitPercentage ?? 0), 2)
 		const label = 'TP Trigger %' + (useTakeProfit ? " - $" + takeProfitAmount : "")
+
+		const triggerAmount = MathUtils.Shorten(MathUtils.MultiplyNumbers(currentPriceAmount, "" + (1.0 + (takeProfitPercentage ?? 0))), 2)
+		const triggerDiffAmount = MathUtils.Shorten(MathUtils.SubtractNumbers(triggerAmount, currentPriceAmount), 2)
+		const helperText = "Price needs to increase by $" + triggerDiffAmount + " (hitting $" + triggerAmount + ") to activate"
+
 		return <div className='input-group'>
 			<TextInput
 				className='input-item'
@@ -120,10 +129,31 @@ const Page: React.FC<Props> = ({ tradingSetup, availableSignals, availableInterv
 				formValidation={{ required: useTakeProfit, min: 0.000001, valueAsNumber: true }}
 				placeholder='%15 == 0.15'
 				label={label}
-				helperText={useTrailingTakeProfit ?'Starts Trailing once amount goes over this threshold' : 'Sell once amount goes over this threshold'}
+				helperText={helperText}
 			/>
 		</div>
-	}, [useTakeProfit, startingSecondAmount, takeProfitPercentage, useTrailingTakeProfit])
+	}, [useTakeProfit, startingSecondAmount, currentPriceAmount, takeProfitPercentage])
+
+	const trailingTakeProfitPercentageInput = useMemo(() => {
+		if (!useTakeProfit || !useTrailingTakeProfit) { return <></>}
+
+		const takeProfitAmount = MathUtils.Shorten("" + (startingSecondAmount ?? 0) * ((takeProfitPercentage ?? 0) - (takeProfitTrailingDeltaPercentage ?? 0)), 2)
+		const label = "Trailing Trigger % - $" + takeProfitAmount
+
+		const triggerAmount = MathUtils.MultiplyNumbers(currentPriceAmount, "" + (1.0 - (takeProfitTrailingDeltaPercentage ?? 0)))
+		const triggerDiffAmount = MathUtils.SubtractNumbers(currentPriceAmount, triggerAmount)
+		const helperText = "Price needs to fall by $" + triggerDiffAmount + " (hitting $" + triggerAmount + ") to activate"
+
+		return <TextInput
+			className='input-item'
+			id='takeProfitTrailingDeltaPercentage-input'
+			formField='takeProfitTrailingDeltaPercentage'
+			formValidation={{ required: useTakeProfit && useTrailingTakeProfit, min: 0.000001, valueAsNumber: true }}
+			placeholder='%15 == 0.15'
+			label={label}
+			helperText={helperText}
+		/>
+	}, [useTakeProfit, useTrailingTakeProfit, currentPriceAmount, takeProfitPercentage, takeProfitTrailingDeltaPercentage])
 
 	const signalIdItems = useMemo(() => {
 		return (availableSignals.map(signal => {
@@ -261,15 +291,7 @@ const Page: React.FC<Props> = ({ tradingSetup, availableSignals, availableInterv
 				</div>}
 				{useTakeProfit && useTrailingTakeProfit && 
 				<div className='input-group'>
-					<TextInput
-						className='input-item'
-						id='takeProfitTrailingDeltaPercentage-input'
-						formField='takeProfitTrailingDeltaPercentage'
-						formValidation={{ required: useTakeProfit && useTrailingTakeProfit, min: 0.000001, valueAsNumber: true }}
-						placeholder='%15 == 0.15'
-						label='Trailing Trigger %'
-						helperText='Bot sells once amount falls below this threshold since highest achieved'
-					/>
+					{trailingTakeProfitPercentageInput}
 					<TextInput
 						className='input-item'
 						id='takeProfitTrailingHardLimitPercentage-input'
