@@ -137,11 +137,14 @@ const Page: React.FC<Props> = ({ tradingSetup, prices, availableSignals, availab
 	const trailingTakeProfitPercentageInput = useMemo(() => {
 		if (!useTakeProfit || !useTrailingTakeProfit) { return <></>}
 
-		const takeProfitAmount = MathUtils.Shorten("" + (startingSecondAmount ?? 0) * ((takeProfitPercentage ?? 0) - (takeProfitTrailingDeltaPercentage ?? 0)), 2)
+		const triggerPercentage = (takeProfitPercentage ?? 0) - (takeProfitTrailingDeltaPercentage ?? 0)
+
+		const takeProfitAmount = MathUtils.Shorten("" + ((startingSecondAmount ?? 0) * triggerPercentage), 2)
 		const label = "Trailing Trigger % - $" + takeProfitAmount
 
-		const triggerAmount = MathUtils.MultiplyNumbers(currentPriceAmount, "" + (1.0 - (takeProfitTrailingDeltaPercentage ?? 0)))
-		const triggerDiffAmount = MathUtils.SubtractNumbers(currentPriceAmount, triggerAmount)
+		const tpTriggerAmount = MathUtils.Shorten(MathUtils.MultiplyNumbers(currentPriceAmount, "" + (1.0 + (takeProfitPercentage ?? 0))), 2)
+		const triggerAmount = MathUtils.MultiplyNumbers(tpTriggerAmount, "" + (1.0 - (takeProfitTrailingDeltaPercentage ?? 0)))
+		const triggerDiffAmount = MathUtils.SubtractNumbers(tpTriggerAmount, triggerAmount)
 		const helperText = "Price needs to fall by $" + triggerDiffAmount + " (hitting $" + triggerAmount + ") to activate"
 
 		return <TextInput
@@ -169,7 +172,6 @@ const Page: React.FC<Props> = ({ tradingSetup, prices, availableSignals, availab
 
 
 	useEffect(() => {
-		console.log("useEffect tradingSetup")
 		if (tradingSetup){
 			formMethods.reset({
 				id: tradingSetup!.id,
