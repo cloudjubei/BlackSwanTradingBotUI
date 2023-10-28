@@ -43,11 +43,9 @@ export type Props = {
 	onCreate: (id: string, startingFirstAmount: string, startingSecondAmount: string, tradingSetup: TradingSetupConfigModel) => void
 	onSave: (tradingSetup: TradingSetupModel, config: TradingSetupConfigModel) => void
 	onDelete: (tradingSetup: TradingSetupModel) => void
-	onForceBuy: (tradingSetup: TradingSetupModel) => void
-	onForceSell: (tradingSetup: TradingSetupModel) => void
 }
 
-const Page: React.FC<Props> = ({ tradingSetup, prices, availableSignals, availableIntervals, onCreate, onSave, onDelete, onForceBuy, onForceSell }: Props) => {
+const Page: React.FC<Props> = ({ tradingSetup, prices, availableSignals, availableIntervals, onCreate, onSave, onDelete }: Props) => {
     const onSubmit = (formData: TradingSetupConfigFormData) => {
 		if (isViewOnly){
 			onSave(tradingSetup!!,
@@ -396,14 +394,6 @@ const Page: React.FC<Props> = ({ tradingSetup, prices, availableSignals, availab
 					/>
 				</div>}
 			
-				{isViewOnly && <div className='input-group'>
-					<Button startIcon={<AttachMoney />} variant='contained' style={{ marginRight: '5px' }} color='error' onClick={() => onForceBuy(tradingSetup)}>
-						Force Buy
-					</Button>
-					<Button startIcon={<Sell />} variant='contained' style={{ marginRight: '5px' }} color='error' onClick={() => onForceSell(tradingSetup)}>
-						Force Sell
-					</Button>
-				</div>}
 				<div className='input-group'>
 					{!isViewOnly && <Button startIcon={<Save />} type='submit' variant='contained' style={{ marginRight: '5px' }}>
 						Create Setup

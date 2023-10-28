@@ -155,7 +155,7 @@ export default function Home()
     const tradingSetupsViews = useMemo(() => {
         return <div className='container'>
             {(tradingSetups.map(tradingSetup => {
-                return <TradingSetupInfo key={tradingSetup.id} tradingSetup={tradingSetup} clickConfig={clickShowTradingSetupConfig} />
+                return <TradingSetupInfo key={tradingSetup.id} tradingSetup={tradingSetup} clickConfig={clickShowTradingSetupConfig}   onForceBuy={clickTradingSetupForceBuy} onForceSell={clickTradingSetupForceSell}/>
             }))}
         </div>
     }, [tradingSetups])
@@ -171,7 +171,7 @@ export default function Home()
                 <button className="menu-button" onClick={clickAddTradingSetup}>{"Add Setup"}</button>
             </div>
             <Modal show={configTradingSetupShowing} clickClose={() => setConfigTradingSetupShowing(false)}>
-                <TradingSetupConfigForm tradingSetup={selectedTradingSetupShowing} prices={prices} availableSignals={AVAILABLE_SIGNAL_IDS} availableIntervals={AVAILABLE_INTERVALS} onCreate={clickTradingSetupAdded} onSave={clickTradingSetupSave} onDelete={clickTradingSetupDelete}  onForceBuy={clickTradingSetupForceBuy} onForceSell={clickTradingSetupForceSell} />
+                <TradingSetupConfigForm tradingSetup={selectedTradingSetupShowing} prices={prices} availableSignals={AVAILABLE_SIGNAL_IDS} availableIntervals={AVAILABLE_INTERVALS} onCreate={clickTradingSetupAdded} onSave={clickTradingSetupSave} onDelete={clickTradingSetupDelete} />
             </Modal>
         </div>
     )

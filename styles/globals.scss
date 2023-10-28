@@ -95,12 +95,29 @@
 		left: var(--start);
 		transform: translate(-50%, -50%);
 	  }
-	  .button_config {
+	  .buttons_container{
 		display:block;
+		width: 60px;
+		height: 100%;
 		margin-left:auto;
-		background-color: #f3f4f6;
-		border-radius: 0 0 0 12px;
-		box-shadow: 0 0 40px -10px rgba(0, 0, 0, .4);
+
+		.button_buy {
+			background-color: #f3f4f6;
+			border-radius: 12px 0 0 12px;
+			box-shadow: 0 0 40px -10px rgba(0, 0, 0, .4);
+			margin-top: 5px;
+		  }
+		  .button_sell {
+			background-color: #f3f4f6;
+			border-radius: 12px 0 0 12px;
+			box-shadow: 0 0 40px -10px rgba(0, 0, 0, .4);
+			margin-top: 5px;
+		  }
+		  .button_config {
+			background-color: #f3f4f6;
+			border-radius: 0 0 0 12px;
+			box-shadow: 0 0 40px -10px rgba(0, 0, 0, .4);
+		  }
 	  }
 	}
 	
