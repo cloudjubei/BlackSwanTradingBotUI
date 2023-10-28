@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo } from 'react'
-import { Cancel, DeleteForever, Save } from '@mui/icons-material'
+import { AttachMoney, Cancel, DeleteForever, Save, Sell } from '@mui/icons-material'
 import { Button, Checkbox, FormControl, FormControlLabel, InputLabel, MenuItem, Select, TextField } from '@mui/material'
 import { FormProvider, SubmitHandler, useForm } from 'react-hook-form'
 import { TextInput } from './Input/TextInput'
@@ -41,14 +41,37 @@ export type Props = {
 	availableSignals: string[]
 	availableIntervals: string[]
 	onCreate: (id: string, startingFirstAmount: string, startingSecondAmount: string, tradingSetup: TradingSetupConfigModel) => void
-	onSave: (formData: TradingSetupConfigFormData) => void
+	onSave: (tradingSetup: TradingSetupModel, config: TradingSetupConfigModel) => void
 	onDelete: (tradingSetup: TradingSetupModel) => void
+	onForceBuy: (tradingSetup: TradingSetupModel) => void
+	onForceSell: (tradingSetup: TradingSetupModel) => void
 }
 
-const Page: React.FC<Props> = ({ tradingSetup, prices, availableSignals, availableIntervals, onCreate, onSave, onDelete }: Props) => {
+const Page: React.FC<Props> = ({ tradingSetup, prices, availableSignals, availableIntervals, onCreate, onSave, onDelete, onForceBuy, onForceSell }: Props) => {
     const onSubmit = (formData: TradingSetupConfigFormData) => {
 		if (isViewOnly){
-			onSave(formData)
+			onSave(tradingSetup!!,
+				{
+					...formData,
+		
+					terminationPercentageLoss: formData.terminationPercentageLoss ?? 0 > 0 ? formData.terminationPercentageLoss : undefined,
+		
+					takeProfit: formData.useTakeProfit ? {
+						percentage: formData.takeProfitPercentage,
+						trailingStop: formData.useTrailingTakeProfit ? {
+							deltaPercentage: formData.takeProfitTrailingDeltaPercentage,
+							hardLimitPercentage: formData.takeProfitTrailingHardLimitPercentage,
+						} as TradingTakeProfitTrailingStopConfigModel : undefined
+					} as TradingTakeProfitConfigModel : undefined,
+		
+					stopLoss: formData.useStopLoss ? {
+						percentage: formData.stopLossPercentage,
+					} as TradingStopLossConfigModel : undefined,
+		
+					useLimitOrders: formData.use_LimitOrders,
+					limitOrderCancelDueToTimeElapsed: formData.limitOrderCancelDueToTimeElapsed ?? 0 > 0 ? formData.limitOrderCancelDueToTimeElapsed : undefined,
+					limitOrderCancelDueToPriceDivergence: formData.limitOrderCancelDueToPriceDivergence ?? 0 > 0 ? "" + formData.limitOrderCancelDueToPriceDivergence : undefined,
+				})
 			return
 		}
         onCreate(
@@ -100,6 +123,8 @@ const Page: React.FC<Props> = ({ tradingSetup, prices, availableSignals, availab
 		},
 	})
 
+	const signal = formMethods.watch('signal')
+	const interval = formMethods.watch('interval')
 	const firstToken = formMethods.watch('firstToken')
 	const secondToken = formMethods.watch('secondToken')
 	const tokenPair = firstToken + secondToken
@@ -156,16 +181,16 @@ const Page: React.FC<Props> = ({ tradingSetup, prices, availableSignals, availab
 			label={label}
 			helperText={helperText}
 		/>
-	}, [useTakeProfit, useTrailingTakeProfit, currentPriceAmount, takeProfitPercentage, takeProfitTrailingDeltaPercentage])
+	}, [startingSecondAmount, useTakeProfit, useTrailingTakeProfit, currentPriceAmount, takeProfitPercentage, takeProfitTrailingDeltaPercentage])
 
 	const signalIdItems = useMemo(() => {
 		return (availableSignals.map(signal => {
-			return <MenuItem value={signal}>{signal}</MenuItem>
+			return <MenuItem key={signal} value={signal}>{signal}</MenuItem>
 		}))
 	}, [availableSignals])
 	const intervalItems = useMemo(() => {
 		return (availableIntervals.map(interval => {
-			return <MenuItem value={interval}>{interval}</MenuItem>
+			return <MenuItem key={interval} value={interval}>{interval}</MenuItem>
 		}))
 	}, [availableIntervals])
 
@@ -192,7 +217,7 @@ const Page: React.FC<Props> = ({ tradingSetup, prices, availableSignals, availab
 				...tradingSetup?.config,
 			})
 		}
-	 }, [tradingSetup])
+	 }, [formMethods, tradingSetup])
 
 	return (
 		<FormProvider {...formMethods}>
@@ -214,7 +239,9 @@ const Page: React.FC<Props> = ({ tradingSetup, prices, availableSignals, availab
 							required: 'A signal id is required!',
 						})}
 						select
+						value={signal}
 						label="ID of the signal"
+						disabled={isViewOnly}
 						>
 						{signalIdItems}
 					</TextField>
@@ -267,7 +294,9 @@ const Page: React.FC<Props> = ({ tradingSetup, prices, availableSignals, availab
 							required: 'An interval is required!',
 						})}
 						select
+						value={interval}
 						label="Interval"
+						disabled={isViewOnly}
 						>
 						{intervalItems}
 					</TextField>
@@ -367,6 +396,14 @@ const Page: React.FC<Props> = ({ tradingSetup, prices, availableSignals, availab
 					/>
 				</div>}
 			
+				{isViewOnly && <div className='input-group'>
+					<Button startIcon={<AttachMoney />} variant='contained' style={{ marginRight: '5px' }} color='error' onClick={() => onForceBuy(tradingSetup)}>
+						Force Buy
+					</Button>
+					<Button startIcon={<Sell />} variant='contained' style={{ marginRight: '5px' }} color='error' onClick={() => onForceSell(tradingSetup)}>
+						Force Sell
+					</Button>
+				</div>}
 				<div className='input-group'>
 					{!isViewOnly && <Button startIcon={<Save />} type='submit' variant='contained' style={{ marginRight: '5px' }}>
 						Create Setup

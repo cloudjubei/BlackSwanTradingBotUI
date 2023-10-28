@@ -4,6 +4,7 @@ import { TradingSetupInfo } from '../components/TradingSetupInfo'
 import TradingSetupConfigForm, { TradingSetupConfigFormData } from '../components/TradingSetupConfigForm'
 import Modal from '../components/Modal/Modal'
 import { WalletsInfo } from '../components/WalletsInfo'
+import Image from 'next/image'
 
 const UPDATE_TIME = 1000
 
@@ -87,8 +88,19 @@ export default function Home()
             setSelectedTradingSetupShowing(undefined)
         ).catch(console.error)
     }
-    const clickTradingSetupSave = (formData: TradingSetupConfigFormData) => {
-        console.log("TODO")
+    const clickTradingSetupSave = (setup: TradingSetupModel, config: TradingSetupConfigModel) => {
+        setConfigTradingSetupShowing(false)
+
+        const save = async () => {
+            const newSetup = await tradingApi.tradingSetupsUpdate({ ...setup, config })
+            const setups = [...tradingSetups]
+            const index = setups.findIndex(s => s.id === newSetup.data.id)
+            setups[index] = newSetup.data
+            setTradingSetups([...setups])
+        }
+        save().then(() =>
+            setSelectedTradingSetupShowing(undefined)
+        ).catch(console.error)
     }
     const clickTradingSetupDelete = (tradingSetup: TradingSetupModel) => {
         setConfigTradingSetupShowing(false)
@@ -102,11 +114,37 @@ export default function Home()
             setSelectedTradingSetupShowing(undefined)
         ).catch(console.error)
     }
+    const clickTradingSetupForceBuy = (tradingSetup: TradingSetupModel) => {
+        setConfigTradingSetupShowing(false)
+        const create = async () => {
+            const newSetup = await transactionApi.transactionForceBuy(tradingSetup.id)
+            const setups = [...tradingSetups]
+            const index = setups.findIndex(s => s.id === newSetup.data.id)
+            setups[index] = newSetup.data
+            setTradingSetups([...setups])
+        }
+        create().then(() =>
+            setSelectedTradingSetupShowing(undefined)
+        ).catch(console.error)
+    }
+    const clickTradingSetupForceSell = (tradingSetup: TradingSetupModel) => {
+        setConfigTradingSetupShowing(false)
+        const create = async () => {
+            const newSetup = await transactionApi.transactionForceSell(tradingSetup.id)
+            const setups = [...tradingSetups]
+            const index = setups.findIndex(s => s.id === newSetup.data.id)
+            setups[index] = newSetup.data
+            setTradingSetups([...setups])
+        }
+        create().then(() =>
+            setSelectedTradingSetupShowing(undefined)
+        ).catch(console.error)
+    }
 
     const wallestView = useMemo(() => {
         return <div className='container wallets'>
             {(Object.keys(walletsFree.amounts).map(token => {
-                return <WalletsInfo token={token} freeAmount={walletsFree.amounts[token]} lockedAmount={walletsLocked.amounts[token]} />
+                return <WalletsInfo key={token} token={token} freeAmount={walletsFree.amounts[token]} lockedAmount={walletsLocked.amounts[token]} />
             }))}
         </div>
     }, [walletsFree, walletsLocked])
@@ -114,14 +152,14 @@ export default function Home()
     const tradingSetupsViews = useMemo(() => {
         return <div className='container'>
             {(tradingSetups.map(tradingSetup => {
-                return <TradingSetupInfo tradingSetup={tradingSetup} clickConfig={clickShowTradingSetupConfig} />
+                return <TradingSetupInfo key={tradingSetup.id} tradingSetup={tradingSetup} clickConfig={clickShowTradingSetupConfig} />
             }))}
         </div>
     }, [tradingSetups])
     
     return (
         <div>
-            <img className="logo" src='./logicxlogo.png' alt='logo' />
+            <Image className="logo" src="/logicxlogo.png" alt="logo" width={200} height={80} />
             <h1> Binance Trading Module </h1>
             {wallestView}
             {tradingSetupsViews}
@@ -130,7 +168,7 @@ export default function Home()
                 <button className="menu-button" onClick={clickAddTradingSetup}>{"Add Setup"}</button>
             </div>
             <Modal show={configTradingSetupShowing} clickClose={() => setConfigTradingSetupShowing(false)}>
-                <TradingSetupConfigForm tradingSetup={selectedTradingSetupShowing} prices={prices} availableSignals={AVAILABLE_SIGNAL_IDS} availableIntervals={AVAILABLE_INTERVALS} onCreate={clickTradingSetupAdded} onSave={clickTradingSetupSave} onDelete={clickTradingSetupDelete} />
+                <TradingSetupConfigForm tradingSetup={selectedTradingSetupShowing} prices={prices} availableSignals={AVAILABLE_SIGNAL_IDS} availableIntervals={AVAILABLE_INTERVALS} onCreate={clickTradingSetupAdded} onSave={clickTradingSetupSave} onDelete={clickTradingSetupDelete}  onForceBuy={clickTradingSetupForceBuy} onForceSell={clickTradingSetupForceSell} />
             </Modal>
         </div>
     )

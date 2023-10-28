@@ -1696,6 +1696,41 @@ export const TradingApiAxiosParamCreator = function (configuration?: Configurati
                 options: localVarRequestOptions,
             };
         },
+        /**
+         * 
+         * @param {TradingSetupModel} tradingSetupModel 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        tradingSetupsUpdate: async (tradingSetupModel: TradingSetupModel, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'tradingSetupModel' is not null or undefined
+            assertParamExists('tradingSetupsUpdate', 'tradingSetupModel', tradingSetupModel)
+            const localVarPath = `/setups`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(tradingSetupModel, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
     }
 };
 
@@ -1748,6 +1783,16 @@ export const TradingApiFp = function(configuration?: Configuration) {
             const localVarAxiosArgs = await localVarAxiosParamCreator.tradingSetupsRemove(id, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
+        /**
+         * 
+         * @param {TradingSetupModel} tradingSetupModel 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async tradingSetupsUpdate(tradingSetupModel: TradingSetupModel, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<TradingSetupModel>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.tradingSetupsUpdate(tradingSetupModel, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
     }
 };
 
@@ -1795,6 +1840,15 @@ export const TradingApiFactory = function (configuration?: Configuration, basePa
          */
         tradingSetupsRemove(id: string, options?: any): AxiosPromise<TradingSetupModel> {
             return localVarFp.tradingSetupsRemove(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {TradingSetupModel} tradingSetupModel 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        tradingSetupsUpdate(tradingSetupModel: TradingSetupModel, options?: any): AxiosPromise<TradingSetupModel> {
+            return localVarFp.tradingSetupsUpdate(tradingSetupModel, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -1851,6 +1905,17 @@ export class TradingApi extends BaseAPI {
     public tradingSetupsRemove(id: string, options?: AxiosRequestConfig) {
         return TradingApiFp(this.configuration).tradingSetupsRemove(id, options).then((request) => request(this.axios, this.basePath));
     }
+
+    /**
+     * 
+     * @param {TradingSetupModel} tradingSetupModel 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof TradingApi
+     */
+    public tradingSetupsUpdate(tradingSetupModel: TradingSetupModel, options?: AxiosRequestConfig) {
+        return TradingApiFp(this.configuration).tradingSetupsUpdate(tradingSetupModel, options).then((request) => request(this.axios, this.basePath));
+    }
 }
 
 
@@ -1868,6 +1933,72 @@ export const TransactionApiAxiosParamCreator = function (configuration?: Configu
          */
         transactionConvertAllBTC: async (options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/transactions/convertAllBTC`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {string} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        transactionForceBuy: async (id: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('transactionForceBuy', 'id', id)
+            const localVarPath = `/transactions/forceBuy/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {string} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        transactionForceSell: async (id: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('transactionForceSell', 'id', id)
+            const localVarPath = `/transactions/forceSell/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -1969,6 +2100,26 @@ export const TransactionApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
+         * @param {string} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async transactionForceBuy(id: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<TradingSetupModel>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.transactionForceBuy(id, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @param {string} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async transactionForceSell(id: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<TradingSetupModel>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.transactionForceSell(id, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -2005,6 +2156,24 @@ export const TransactionApiFactory = function (configuration?: Configuration, ba
         },
         /**
          * 
+         * @param {string} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        transactionForceBuy(id: string, options?: any): AxiosPromise<TradingSetupModel> {
+            return localVarFp.transactionForceBuy(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {string} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        transactionForceSell(id: string, options?: any): AxiosPromise<TradingSetupModel> {
+            return localVarFp.transactionForceSell(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -2037,6 +2206,28 @@ export class TransactionApi extends BaseAPI {
      */
     public transactionConvertAllBTC(options?: AxiosRequestConfig) {
         return TransactionApiFp(this.configuration).transactionConvertAllBTC(options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {string} id 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof TransactionApi
+     */
+    public transactionForceBuy(id: string, options?: AxiosRequestConfig) {
+        return TransactionApiFp(this.configuration).transactionForceBuy(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {string} id 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof TransactionApi
+     */
+    public transactionForceSell(id: string, options?: AxiosRequestConfig) {
+        return TransactionApiFp(this.configuration).transactionForceSell(id, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
