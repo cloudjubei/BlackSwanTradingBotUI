@@ -366,6 +366,12 @@ export interface TradingSetupModel {
      * @memberof TradingSetupModel
      */
     'openTransactions': { [key: string]: TradingTransactionModel; };
+    /**
+     * 
+     * @type {number}
+     * @memberof TradingSetupModel
+     */
+    'failedDueToMarketMaking': number;
 }
 
 

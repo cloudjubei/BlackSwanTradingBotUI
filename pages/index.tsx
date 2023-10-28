@@ -64,11 +64,11 @@ export default function Home()
     }, [time])
 
     const clickConvertWalletBTC = () => {
-        const convert = async () => {
+        const action = async () => {
             const walletFree = await transactionApi.transactionConvertAllBTC()
             setWalletsFree(walletFree.data)
         }
-        convert().catch(console.error)
+        action().catch(console.error)
     }
     const clickShowTradingSetupConfig = (tradingSetup: TradingSetupModel) => {
         setSelectedTradingSetupShowing(tradingSetup)
@@ -80,63 +80,66 @@ export default function Home()
     }
     const clickTradingSetupAdded = (id: string, startingFirstAmount: string, startingSecondAmount: string, config: TradingSetupConfigModel) => {
         setConfigTradingSetupShowing(false)
-        const create = async () => {
+        const action = async () => {
             const newSetupData = await tradingApi.tradingSetupsAdd(id, startingFirstAmount, startingSecondAmount, config)
             setTradingSetups([...tradingSetups, newSetupData.data])
         }
-        create().then(() =>
+        action().then(() =>
             setSelectedTradingSetupShowing(undefined)
         ).catch(console.error)
     }
     const clickTradingSetupSave = (setup: TradingSetupModel, config: TradingSetupConfigModel) => {
         setConfigTradingSetupShowing(false)
 
-        const save = async () => {
+        const action = async () => {
             const newSetup = await tradingApi.tradingSetupsUpdate({ ...setup, config })
             const setups = [...tradingSetups]
             const index = setups.findIndex(s => s.id === newSetup.data.id)
             setups[index] = newSetup.data
             setTradingSetups([...setups])
         }
-        save().then(() =>
+        action().then(() =>
             setSelectedTradingSetupShowing(undefined)
         ).catch(console.error)
     }
     const clickTradingSetupDelete = (tradingSetup: TradingSetupModel) => {
         setConfigTradingSetupShowing(false)
-        const create = async () => {
+        const action = async () => {
             await tradingApi.tradingSetupsRemove(tradingSetup.id)
             const setups = [...tradingSetups]
-            setups.splice(0, 1, tradingSetup)
-            setTradingSetups(setups)
+            const index = setups.findIndex(s => s.id === tradingSetup.id)
+            if (index !== undefined){
+                setups.splice(index, 1)
+            }
+            setTradingSetups([...setups])
         }
-        create().then(() =>
+        action().then(() =>
             setSelectedTradingSetupShowing(undefined)
         ).catch(console.error)
     }
     const clickTradingSetupForceBuy = (tradingSetup: TradingSetupModel) => {
         setConfigTradingSetupShowing(false)
-        const create = async () => {
+        const action = async () => {
             const newSetup = await transactionApi.transactionForceBuy(tradingSetup.id)
             const setups = [...tradingSetups]
             const index = setups.findIndex(s => s.id === newSetup.data.id)
             setups[index] = newSetup.data
             setTradingSetups([...setups])
         }
-        create().then(() =>
+        action().then(() =>
             setSelectedTradingSetupShowing(undefined)
         ).catch(console.error)
     }
     const clickTradingSetupForceSell = (tradingSetup: TradingSetupModel) => {
         setConfigTradingSetupShowing(false)
-        const create = async () => {
+        const action = async () => {
             const newSetup = await transactionApi.transactionForceSell(tradingSetup.id)
             const setups = [...tradingSetups]
             const index = setups.findIndex(s => s.id === newSetup.data.id)
             setups[index] = newSetup.data
             setTradingSetups([...setups])
         }
-        create().then(() =>
+        action().then(() =>
             setSelectedTradingSetupShowing(undefined)
         ).catch(console.error)
     }

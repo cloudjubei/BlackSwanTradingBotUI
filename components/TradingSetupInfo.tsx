@@ -24,7 +24,7 @@ export const TradingSetupInfo = ({ tradingSetup, clickConfig }: Props) =>
 
   const buyTransactions = tradingSetup.transactions.filter(t => t.complete && !t.canceled && t.buy && MathUtils.IsBiggerThanZero(t.firstAmount))
   const sellTransactions = tradingSetup.transactions.filter(t => t.complete && !t.canceled && !t.buy && MathUtils.IsBiggerThanZero(t.firstAmount))
-  const cancelledTransactions = tradingSetup.transactions.filter(t => t.complete && t.canceled && MathUtils.IsBiggerThanZero(t.firstAmount))
+  const cancelledTransactions = tradingSetup.transactions.filter(t => t.complete && t.canceled)
 
   const hasRunningTrade = MathUtils.IsGreaterThan(tradingSetup.firstAmount, "0.001")
   // const hasTrade = transactions.length > 0 
@@ -114,8 +114,13 @@ export const TradingSetupInfo = ({ tradingSetup, clickConfig }: Props) =>
       </article>
       <article id={'tradesCancel'} className={`section__item`}>
         <Error/>
-        <span className="section__item__name">Failed transactions:</span>
+        <span className="section__item__name">Cancelled transactions:</span>
         <span className="section__item__value">{cancelledTransactions.length}</span>
+      </article>
+      <article id={'tradesFailedMarketMaking'} className={`section__item`}>
+        <Error/>
+        <span className="section__item__name">Market Making failed:</span>
+        <span className="section__item__value">{tradingSetup.failedDueToMarketMaking}</span>
       </article>
       {hasPendingTransaction && <span>Pending transaction:</span>}
       {hasPendingTransaction && <article id={'trades'} className={`section__item`}>
