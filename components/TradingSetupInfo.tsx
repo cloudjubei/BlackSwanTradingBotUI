@@ -33,8 +33,8 @@ export const TradingSetupInfo = ({ tradingSetup, clickConfig, onForceBuy, onForc
   // const lastTrade = hasTrade ? transactions[transactions.length-1] : null
   // const hasRunningTrade = hasTrade && lastTrade!.buy && MathUtils.IsBiggerThanZero(lastTrade!.firstAmount) && MathUtils.IsBiggerThanZero(tradingSetup.currentPriceAmount)
   const tradeEntryPrice = hasRunningTrade ? tradingSetup.tradeEntryPriceAmount : "0"
-  const tradeStartAmount = hasRunningTrade ?  MathUtils.MultiplyNumbers(tradingSetup.firstAmount, tradeEntryPrice) : "0" //MathUtils.Shorten(MathUtils.AddNumbers(lastTrade!.secondAmount, MathUtils.MultiplyNumbers(lastTrade!.priceAmount, lastTrade!.firstAmount))) : "0"
-  const tradeCurrentAmount = hasRunningTrade ? MathUtils.MultiplyNumbers(tradingSetup.firstAmount, tradingSetup.currentPriceAmount) : "0"
+  const tradeStartAmount = hasRunningTrade ?  MathUtils.AddNumbers(MathUtils.MultiplyNumbers(tradingSetup.firstAmount, tradeEntryPrice), tradingSetup.secondAmount) : "0" //MathUtils.Shorten(MathUtils.AddNumbers(lastTrade!.secondAmount, MathUtils.MultiplyNumbers(lastTrade!.priceAmount, lastTrade!.firstAmount))) : "0"
+  const tradeCurrentAmount = hasRunningTrade ? MathUtils.AddNumbers(MathUtils.MultiplyNumbers(tradingSetup.firstAmount, tradingSetup.currentPriceAmount), tradingSetup.secondAmount) : "0"
   const tradeProfitAmount = MathUtils.Shorten(MathUtils.SubtractNumbers(tradeCurrentAmount, tradeStartAmount), 2)
   const tradeProfitPercentage = MathUtils.Shorten(MathUtils.DivideNumbers(tradeProfitAmount, tradeStartAmount), 3)
   const tradeColor = MathUtils.IsZero(tradeProfitAmount) ? "Black" : MathUtils.IsBiggerThanZero(tradeProfitAmount) ? "Green" : "Red"
@@ -44,6 +44,8 @@ export const TradingSetupInfo = ({ tradingSetup, clickConfig, onForceBuy, onForc
   const isTrailingTPActivated = hasTrailingTP ? MathUtils.IsGreaterThanOrEqualTo(tradingSetup.tradeHighestPriceAmount, takeProfitTriggerAmount) : false
   const trailingTPActivation = isTrailingTPActivated ? MathUtils.MultiplyNumbers(tradingSetup.tradeHighestPriceAmount, "" + (1.0 - (tradingSetup.config.takeProfit?.trailingStop?.deltaPercentage ?? 0))) : "0"
 
+  const stopLossTriggerAmount = hasRunningTrade && tradingSetup.config.stopLoss != null ? MathUtils.MultiplyNumbers(tradingSetup.tradeEntryPriceAmount, "" + (1.0 - (tradingSetup.config.stopLoss!.percentage ?? 0))) : "0"
+  
   return <article key={"info-" + tradingSetup.id} className="section">
     <header>
       {tradingSetup.status == TradingSetupStatusType.Initial && <TripOrigin className="icon"/>}
@@ -95,6 +97,12 @@ export const TradingSetupInfo = ({ tradingSetup, clickConfig, onForceBuy, onForc
         <AttachMoneySharp style={{color:"Orange"}}/>
         <span className="section__item__name" style={{color:"Orange"}}>Trailing will sell at:</span>
         <span className="section__item__value" style={{color:"Orange"}}>{trailingTPActivation}</span>
+      </article>}
+      {hasRunningTrade && MathUtils.IsBiggerThanZero(stopLossTriggerAmount) && 
+      <article id={'takeProfit'} className={`section__item`}>
+        <AttachMoneySharp style={{color:"Purple"}}/>
+        <span className="section__item__name" style={{color:"Purple"}}>Stop Loss Activates at:</span>
+        <span className="section__item__value" style={{color:"Purple"}}>{stopLossTriggerAmount}</span>
       </article>}
       <span className="section__header">Tokens</span>
       <article id={'firstToken'} className={`section__item`}>
