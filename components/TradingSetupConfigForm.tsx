@@ -28,6 +28,7 @@ export interface TradingSetupConfigFormData
     stopLossPercentage?: number,
 
     use_LimitOrders: boolean
+    use_LimitMakerOrders: boolean
     limitOrderBuyOffset: number
     limitOrderSellOffset: number
     limitOrderCancelDueToChecksElapsed: number
@@ -67,6 +68,7 @@ const Page: React.FC<Props> = ({ tradingSetup, prices, availableSignals, availab
 					} as TradingStopLossConfigModel : undefined,
 		
 					useLimitOrders: formData.use_LimitOrders,
+					useLimitMakerOrders: formData.use_LimitMakerOrders,
 					limitOrderCancelDueToTimeElapsed: formData.limitOrderCancelDueToTimeElapsed ?? 0 > 0 ? formData.limitOrderCancelDueToTimeElapsed : undefined,
 					limitOrderCancelDueToPriceDivergence: formData.limitOrderCancelDueToPriceDivergence ?? 0 > 0 ? "" + formData.limitOrderCancelDueToPriceDivergence : undefined,
 				})
@@ -94,6 +96,7 @@ const Page: React.FC<Props> = ({ tradingSetup, prices, availableSignals, availab
             } as TradingStopLossConfigModel : undefined,
 
 			useLimitOrders: formData.use_LimitOrders,
+			useLimitMakerOrders: formData.use_LimitMakerOrders,
             limitOrderCancelDueToTimeElapsed: formData.limitOrderCancelDueToTimeElapsed ?? 0 > 0 ? formData.limitOrderCancelDueToTimeElapsed : undefined,
             limitOrderCancelDueToPriceDivergence: formData.limitOrderCancelDueToPriceDivergence ?? 0 > 0 ? "" + formData.limitOrderCancelDueToPriceDivergence : undefined,
         })
@@ -113,6 +116,7 @@ const Page: React.FC<Props> = ({ tradingSetup, prices, availableSignals, availab
 			useStopLoss: false,
 			useTrailingTakeProfit: false,
             use_LimitOrders: true,
+			use_LimitMakerOrders: false,
             limitOrderBuyOffset: 0,
             limitOrderSellOffset: 0,
             limitOrderCancelDueToChecksElapsed: 60,
@@ -131,6 +135,7 @@ const Page: React.FC<Props> = ({ tradingSetup, prices, availableSignals, availab
 	const useTrailingTakeProfit = formMethods.watch('useTrailingTakeProfit')
 	const useStopLoss = formMethods.watch('useStopLoss')
 	const useLimitOrders = formMethods.watch('use_LimitOrders')
+	const useLimitMakerOrders = formMethods.watch('use_LimitMakerOrders')
 	const startingSecondAmount = formMethods.watch('startingSecondAmount')
 	const takeProfitPercentage = formMethods.watch('takeProfitPercentage')
 	const takeProfitTrailingDeltaPercentage = formMethods.watch('takeProfitTrailingDeltaPercentage')
@@ -211,6 +216,7 @@ const Page: React.FC<Props> = ({ tradingSetup, prices, availableSignals, availab
 				stopLossPercentage: tradingSetup!.config.stopLoss?.percentage,
 
 				use_LimitOrders: tradingSetup!.config.useLimitOrders,
+				use_LimitMakerOrders: tradingSetup!.config.userLimitMakerOrders,
 
 				...tradingSetup?.config,
 			})
@@ -349,6 +355,9 @@ const Page: React.FC<Props> = ({ tradingSetup, prices, availableSignals, availab
 				<div className='input-group'>
                 	<FormControlLabel control={<Checkbox />} label='Use Limit Orders' checked={useLimitOrders} onChange={(_, checked) => formMethods.setValue('use_LimitOrders', checked)}/>
 				</div>
+				{useLimitOrders && <div className='input-group'>
+                	<FormControlLabel control={<Checkbox />} label='Use Limit Maker Orders' checked={useLimitMakerOrders} onChange={(_, checked) => formMethods.setValue('use_LimitMakerOrders', checked)}/>
+				</div>}
 				{useLimitOrders && <div className='input-group'>
 					<TextInput
 						className='input-item'

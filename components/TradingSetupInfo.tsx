@@ -39,12 +39,12 @@ export const TradingSetupInfo = ({ tradingSetup, clickConfig, onForceBuy, onForc
   const tradeProfitPercentage = MathUtils.Shorten(MathUtils.DivideNumbers(tradeProfitAmount, tradeStartAmount), 3)
   const tradeColor = MathUtils.IsZero(tradeProfitAmount) ? "Black" : MathUtils.IsBiggerThanZero(tradeProfitAmount) ? "Green" : "Red"
 
-  const takeProfitTriggerAmount = hasRunningTrade ? MathUtils.MultiplyNumbers(tradingSetup.tradeEntryPriceAmount, "" + (1.0 + (tradingSetup.config.takeProfit?.percentage ?? 0))) : "0"
+  const takeProfitTriggerAmount = hasRunningTrade ? MathUtils.Shorten(MathUtils.MultiplyNumbers(tradingSetup.tradeEntryPriceAmount, "" + (1.0 + (tradingSetup.config.takeProfit?.percentage ?? 0)))) : "0"
   const hasTrailingTP = hasRunningTrade ? tradingSetup.config.takeProfit?.trailingStop !== undefined : false
   const isTrailingTPActivated = hasTrailingTP ? MathUtils.IsGreaterThanOrEqualTo(tradingSetup.tradeHighestPriceAmount, takeProfitTriggerAmount) : false
-  const trailingTPActivation = isTrailingTPActivated ? MathUtils.MultiplyNumbers(tradingSetup.tradeHighestPriceAmount, "" + (1.0 - (tradingSetup.config.takeProfit?.trailingStop?.deltaPercentage ?? 0))) : "0"
+  const trailingTPActivation = isTrailingTPActivated ? MathUtils.Shorten(MathUtils.MultiplyNumbers(tradingSetup.tradeHighestPriceAmount, "" + (1.0 - (tradingSetup.config.takeProfit?.trailingStop?.deltaPercentage ?? 0)))) : "0"
 
-  const stopLossTriggerAmount = hasRunningTrade && tradingSetup.config.stopLoss != null ? MathUtils.MultiplyNumbers(tradingSetup.tradeEntryPriceAmount, "" + (1.0 - (tradingSetup.config.stopLoss!.percentage ?? 0))) : "0"
+  const stopLossTriggerAmount = hasRunningTrade && tradingSetup.config.stopLoss != null ? MathUtils.Shorten(MathUtils.MultiplyNumbers(tradingSetup.tradeEntryPriceAmount, "" + (1.0 - (tradingSetup.config.stopLoss!.percentage ?? 0)))) : "0"
   
   return <article key={"info-" + tradingSetup.id} className="section">
     <header>
@@ -84,7 +84,7 @@ export const TradingSetupInfo = ({ tradingSetup, clickConfig, onForceBuy, onForc
       <article id={'currentTradeEntry'} className={`section__item`}>
         <AttachMoneySharp/>
         <span className="section__item__name">Entry Price:</span>
-        <span className="section__item__value">{tradeEntryPrice}</span>
+        <span className="section__item__value">{MathUtils.Shorten(tradeEntryPrice, 2)}</span>
       </article>}
       {hasRunningTrade && 
       <article id={'takeProfit'} className={`section__item`}>
