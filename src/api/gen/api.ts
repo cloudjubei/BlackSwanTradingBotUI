@@ -235,6 +235,12 @@ export interface TradingSetupConfigModel {
     'useLimitOrders': boolean;
     /**
      * 
+     * @type {boolean}
+     * @memberof TradingSetupConfigModel
+     */
+    'useLimitMakerOrders': boolean;
+    /**
+     * 
      * @type {number}
      * @memberof TradingSetupConfigModel
      */
@@ -263,6 +269,12 @@ export interface TradingSetupConfigModel {
      * @memberof TradingSetupConfigModel
      */
     'limitOrderCancelDueToPriceDivergence'?: string;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof TradingSetupConfigModel
+     */
+    'isMarginAccount': boolean;
 }
 /**
  * 
@@ -2085,6 +2097,64 @@ export const TransactionApiAxiosParamCreator = function (configuration?: Configu
                 options: localVarRequestOptions,
             };
         },
+        /**
+         * 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        transactionGetWalletMarginFree: async (options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/transactions/walletMargin/free`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        transactionGetWalletMarginLocked: async (options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/transactions/walletMargin/locked`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
     }
 };
 
@@ -2142,6 +2212,24 @@ export const TransactionApiFp = function(configuration?: Configuration) {
             const localVarAxiosArgs = await localVarAxiosParamCreator.transactionGetWalletLocked(options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
+        /**
+         * 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async transactionGetWalletMarginFree(options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<WalletModel>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.transactionGetWalletMarginFree(options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
+         * 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async transactionGetWalletMarginLocked(options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<WalletModel>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.transactionGetWalletMarginLocked(options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
     }
 };
 
@@ -2193,6 +2281,22 @@ export const TransactionApiFactory = function (configuration?: Configuration, ba
          */
         transactionGetWalletLocked(options?: any): AxiosPromise<WalletModel> {
             return localVarFp.transactionGetWalletLocked(options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        transactionGetWalletMarginFree(options?: any): AxiosPromise<WalletModel> {
+            return localVarFp.transactionGetWalletMarginFree(options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        transactionGetWalletMarginLocked(options?: any): AxiosPromise<WalletModel> {
+            return localVarFp.transactionGetWalletMarginLocked(options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -2254,6 +2358,26 @@ export class TransactionApi extends BaseAPI {
      */
     public transactionGetWalletLocked(options?: AxiosRequestConfig) {
         return TransactionApiFp(this.configuration).transactionGetWalletLocked(options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof TransactionApi
+     */
+    public transactionGetWalletMarginFree(options?: AxiosRequestConfig) {
+        return TransactionApiFp(this.configuration).transactionGetWalletMarginFree(options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof TransactionApi
+     */
+    public transactionGetWalletMarginLocked(options?: AxiosRequestConfig) {
+        return TransactionApiFp(this.configuration).transactionGetWalletMarginLocked(options).then((request) => request(this.axios, this.basePath));
     }
 }
 

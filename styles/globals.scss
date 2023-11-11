@@ -2,7 +2,7 @@
 .container{
 	display: grid;
 	gap: 20px;
-	grid-template-columns: auto auto auto;
+	grid-template-columns: auto auto auto auto auto;
 }
 .wallets{
 	.section{
@@ -232,6 +232,9 @@ body {
 	font-family: 'Source Sans Pro', sans-serif;
 }
 h1 {
+	color: #fff;
+}
+h4 {
 	color: #fff;
 }
 

@@ -34,6 +34,8 @@ export interface TradingSetupConfigFormData
     limitOrderCancelDueToChecksElapsed: number
     limitOrderCancelDueToTimeElapsed?: number
     limitOrderCancelDueToPriceDivergence?: string
+
+	isMarginAccount: boolean
 }
 
 export type Props = {
@@ -70,7 +72,7 @@ const Page: React.FC<Props> = ({ tradingSetup, prices, availableSignals, availab
 					useLimitOrders: formData.use_LimitOrders,
 					useLimitMakerOrders: formData.use_LimitMakerOrders,
 					limitOrderCancelDueToTimeElapsed: formData.limitOrderCancelDueToTimeElapsed ?? 0 > 0 ? formData.limitOrderCancelDueToTimeElapsed : undefined,
-					limitOrderCancelDueToPriceDivergence: formData.limitOrderCancelDueToPriceDivergence ?? 0 > 0 ? "" + formData.limitOrderCancelDueToPriceDivergence : undefined,
+					limitOrderCancelDueToPriceDivergence: formData.limitOrderCancelDueToPriceDivergence ?? 0 > 0 ? "" + formData.limitOrderCancelDueToPriceDivergence : undefined
 				})
 			return
 		}
@@ -122,6 +124,8 @@ const Page: React.FC<Props> = ({ tradingSetup, prices, availableSignals, availab
             limitOrderCancelDueToChecksElapsed: 60,
             limitOrderCancelDueToTimeElapsed:  undefined,
             limitOrderCancelDueToPriceDivergence: undefined,
+
+			isMarginAccount: false
 		},
 	})
 
@@ -139,6 +143,7 @@ const Page: React.FC<Props> = ({ tradingSetup, prices, availableSignals, availab
 	const startingSecondAmount = formMethods.watch('startingSecondAmount')
 	const takeProfitPercentage = formMethods.watch('takeProfitPercentage')
 	const takeProfitTrailingDeltaPercentage = formMethods.watch('takeProfitTrailingDeltaPercentage')
+	const isMarginAccount = formMethods.watch('isMarginAccount')
 
 	const takeProfitPercentageInput = useMemo(() => {
 		if (!useTakeProfit) { return <></>}
@@ -402,6 +407,10 @@ const Page: React.FC<Props> = ({ tradingSetup, prices, availableSignals, availab
 						helperText='e.g. 50, means that if current price changes by 50 - order is canceled'
 					/>
 				</div>}
+
+				<div className='input-group'>
+                	<FormControlLabel control={<Checkbox />} label='Margin Account' checked={isMarginAccount} onChange={(_, checked) => formMethods.setValue('isMarginAccount', checked)}/>
+				</div>
 			
 				<div className='input-group'>
 					{!isViewOnly && <Button startIcon={<Save />} type='submit' variant='contained' style={{ marginRight: '5px' }}>

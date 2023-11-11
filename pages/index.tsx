@@ -25,6 +25,8 @@ export default function Home()
     const [time, setTime] = useState(Date.now())
     const [walletsFree, setWalletsFree] = useState<WalletModel>({ amounts: {}})
     const [walletsLocked, setWalletsLocked] = useState<WalletModel>({ amounts: {}})
+    const [walletsMarginFree, setWalletsMarginFree] = useState<WalletModel>({ amounts: {}})
+    const [walletsMarginLocked, setWalletsMarginLocked] = useState<WalletModel>({ amounts: {}})
     const [tradingSetups, setTradingSetups] = useState<TradingSetupModel[]>([])
     const [prices, setPrices] = useState<{[tokenPair:string] : string}>({})
 	const pricesApi = useMemo(() => { return new PricesApi(new Configuration({ basePath: "http://localhost:3001"})) }, [])
@@ -48,6 +50,11 @@ export default function Home()
             setWalletsFree(walletFree.data)
             const walletLocked = await transactionApi.transactionGetWalletLocked()
             setWalletsLocked(walletLocked.data)
+
+            const walletMarginFree = await transactionApi.transactionGetWalletMarginFree()
+            setWalletsMarginFree(walletMarginFree.data)
+            const walletMarginLocked = await transactionApi.transactionGetWalletMarginLocked()
+            setWalletsMarginLocked(walletMarginLocked.data)
 
             const newPrices : {[tokenPair:string] : string} = {}
             for (const tokenPair of AVAILABLE_TOKEN_PAIRS) {
@@ -144,13 +151,20 @@ export default function Home()
         ).catch(console.error)
     }
 
-    const wallestView = useMemo(() => {
+    const walletsView = useMemo(() => {
         return <div className='container wallets'>
             {(Object.keys(walletsFree.amounts).map(token => {
                 return <WalletsInfo key={token} token={token} freeAmount={walletsFree.amounts[token]} lockedAmount={walletsLocked.amounts[token]} />
             }))}
         </div>
     }, [walletsFree, walletsLocked])
+    const walletsMarginView = useMemo(() => {
+        return <div className='container wallets margin'>
+            {(Object.keys(walletsMarginFree.amounts).map(token => {
+                return <WalletsInfo key={token} token={token} freeAmount={walletsMarginFree.amounts[token]} lockedAmount={walletsMarginLocked.amounts[token]} />
+            }))}
+        </div>
+    }, [walletsMarginFree, walletsMarginLocked])
 
     const tradingSetupsViews = useMemo(() => {
         return <div className='container'>
@@ -164,7 +178,10 @@ export default function Home()
         <div>
             <Image className="logo" src="/logicxlogo.png" alt="logo" width={200} height={80} />
             <h1> Binance Trading Module </h1>
-            {wallestView}
+            <h4>Spot</h4>
+            {walletsView}
+            <h4>Margin</h4>
+            {walletsMarginView}
             {tradingSetupsViews}
             <div className="menu">
                 <button className="menu-button" onClick={clickConvertWalletBTC}>{"Convert all BTC"}</button>
