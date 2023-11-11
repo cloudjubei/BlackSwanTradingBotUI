@@ -9,7 +9,7 @@ import Image from 'next/image'
 const UPDATE_TIME = 1000
 
 const AVAILABLE_TOKEN_PAIRS = [
-    "BTCUSDT", "BTCFDUSD"
+    "BTCUSDT", "BTCFDUSD", "XRPUSDT"
 ]
 const AVAILABLE_SIGNAL_IDS = [
 	"bollingerHighSignal", "bollingerLowSignal", 
