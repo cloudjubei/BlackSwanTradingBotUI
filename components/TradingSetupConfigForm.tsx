@@ -25,7 +25,8 @@ export interface TradingSetupConfigFormData
     takeProfitTrailingHardLimitPercentage?: number,
 
     useStopLoss: boolean
-    stopLossPercentage?: number,
+    stopLossPercentage: number,
+    stopLossTimeout: number,
 
     use_LimitOrders: boolean
     use_LimitMakerOrders: boolean
@@ -67,6 +68,7 @@ const Page: React.FC<Props> = ({ tradingSetup, prices, availableSignals, availab
 		
 					stopLoss: formData.useStopLoss ? {
 						percentage: formData.stopLossPercentage,
+						timeout: formData.stopLossTimeout
 					} as TradingStopLossConfigModel : undefined,
 		
 					useLimitOrders: formData.use_LimitOrders,
@@ -95,6 +97,7 @@ const Page: React.FC<Props> = ({ tradingSetup, prices, availableSignals, availab
 
             stopLoss: formData.useStopLoss ? {
                 percentage: formData.stopLossPercentage,
+				timeout: formData.stopLossTimeout
             } as TradingStopLossConfigModel : undefined,
 
 			useLimitOrders: formData.use_LimitOrders,
@@ -116,6 +119,8 @@ const Page: React.FC<Props> = ({ tradingSetup, prices, availableSignals, availab
 
 			useTakeProfit: true,
 			useStopLoss: false,
+			stopLossPercentage: 0,
+			stopLossTimeout: 0,
 			useTrailingTakeProfit: false,
             use_LimitOrders: true,
 			use_LimitMakerOrders: false,
@@ -218,10 +223,11 @@ const Page: React.FC<Props> = ({ tradingSetup, prices, availableSignals, availab
 				takeProfitTrailingHardLimitPercentage: tradingSetup!.config.takeProfit?.trailingStop?.hardLimitPercentage,
 
 				useStopLoss: tradingSetup!.config.stopLoss !== undefined,
-				stopLossPercentage: tradingSetup!.config.stopLoss?.percentage,
+				stopLossPercentage: tradingSetup!.config.stopLoss?.percentage ?? 0,
+				stopLossTimeout: tradingSetup!.config.stopLoss?.timeout ?? 0,
 
 				use_LimitOrders: tradingSetup!.config.useLimitOrders,
-				use_LimitMakerOrders: tradingSetup!.config.userLimitMakerOrders,
+				use_LimitMakerOrders: tradingSetup!.config.useLimitMakerOrders,
 
 				...tradingSetup?.config,
 			})
@@ -354,6 +360,14 @@ const Page: React.FC<Props> = ({ tradingSetup, prices, availableSignals, availab
 						formValidation={{ required: useStopLoss, min: 0.00001, valueAsNumber: true }}
 						placeholder='%15 == 0.15'
 						label='Percentage to trigger Stop Loss'
+					/>
+					<TextInput
+						className='input-item'
+						id='stopLossTimeout-input'
+						formField='stopLossTimeout'
+						formValidation={{ required: useStopLoss, min: 0, valueAsNumber: true }}
+						placeholder='seconds'
+						label='Seconds to wait to restart trading after a SL'
 					/>
 				</div>}
 

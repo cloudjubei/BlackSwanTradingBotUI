@@ -329,7 +329,7 @@ export interface TradingSetupModel {
      * @type {number}
      * @memberof TradingSetupModel
      */
-    'lastUpdate': number;
+    'timeoutTimestamp': number;
     /**
      * 
      * @type {string}
@@ -414,6 +414,12 @@ export interface TradingStopLossConfigModel {
      * @memberof TradingStopLossConfigModel
      */
     'percentage': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof TradingStopLossConfigModel
+     */
+    'timeout': number;
 }
 /**
  * 
