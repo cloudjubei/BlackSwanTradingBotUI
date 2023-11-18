@@ -165,7 +165,7 @@ const Page: React.FC<Props> = ({ tradingSetup, prices, availableSignals, availab
 				id='takeProfitPercentage-input'
 				formField='takeProfitPercentage'
 				formValidation={{ required: useTakeProfit, min: 0.000001, valueAsNumber: true }}
-				placeholder='%15 == 0.15'
+				placeholder='15% == 0.15'
 				label={label}
 				helperText={helperText}
 			/>
@@ -190,7 +190,7 @@ const Page: React.FC<Props> = ({ tradingSetup, prices, availableSignals, availab
 			id='takeProfitTrailingDeltaPercentage-input'
 			formField='takeProfitTrailingDeltaPercentage'
 			formValidation={{ required: useTakeProfit && useTrailingTakeProfit, min: 0.000001, valueAsNumber: true }}
-			placeholder='%15 == 0.15'
+			placeholder='15% == 0.15'
 			label={label}
 			helperText={helperText}
 		/>
@@ -321,7 +321,7 @@ const Page: React.FC<Props> = ({ tradingSetup, prices, availableSignals, availab
 						id='terminationPercentageLoss-input'
 						formField='terminationPercentageLoss'
 						formValidation={{ min: 0.0, valueAsNumber: true }}
-						placeholder='%15 == 0.15'
+						placeholder='15% == 0.15'
 						label='Termination % loss'
 						helperText='% amount when setup is terminated'
 					/>
@@ -343,7 +343,7 @@ const Page: React.FC<Props> = ({ tradingSetup, prices, availableSignals, availab
 						id='takeProfitTrailingHardLimitPercentage-input'
 						formField='takeProfitTrailingHardLimitPercentage'
 						formValidation={{ min: 0.000001, valueAsNumber: true }}
-						placeholder='%15 == 0.15'
+						placeholder='15% == 0.15'
 						label='(Optional) Hard limit'
 						helperText='Threshold to sell once reached desired profit % (similar to original TP)'
 					/>
@@ -358,7 +358,7 @@ const Page: React.FC<Props> = ({ tradingSetup, prices, availableSignals, availab
 						id='stopLossPercentage-input'
 						formField='stopLossPercentage'
 						formValidation={{ required: useStopLoss, min: 0.00001, valueAsNumber: true }}
-						placeholder='%15 == 0.15'
+						placeholder='15% == 0.15'
 						label='Percentage to trigger Stop Loss'
 					/>
 					<TextInput

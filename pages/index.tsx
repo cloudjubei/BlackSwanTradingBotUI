@@ -5,6 +5,7 @@ import TradingSetupConfigForm, { TradingSetupConfigFormData } from '../component
 import Modal from '../components/Modal/Modal'
 import { WalletsInfo } from '../components/WalletsInfo'
 import Image from 'next/image'
+import TradingSetupHistoryView from '../components/TradingSetupHistoryView'
 
 const UPDATE_TIME = 1000
 
@@ -35,6 +36,7 @@ export default function Home()
 	const transactionApi = useMemo(() => { return new TransactionApi(new Configuration({ basePath: "http://localhost:3001"})) }, [])
     const [selectedTradingSetupShowing, setSelectedTradingSetupShowing] = useState<TradingSetupModel | undefined>(undefined)
     const [configTradingSetupShowing, setConfigTradingSetupShowing] = useState(false)
+    const [historyTradingSetupShowing, setHistoryTradingSetupShowing] = useState(false)
 
     useEffect(() => {
       const interval = setInterval(() => setTime(Date.now()), UPDATE_TIME)
@@ -150,6 +152,10 @@ export default function Home()
             setSelectedTradingSetupShowing(undefined)
         ).catch(console.error)
     }
+    const clickHistory = (tradingSetup: TradingSetupModel) => {
+        setSelectedTradingSetupShowing(tradingSetup)
+        setHistoryTradingSetupShowing(true)
+    }
 
     const walletsView = useMemo(() => {
         return <div className='container wallets'>
@@ -169,7 +175,7 @@ export default function Home()
     const tradingSetupsViews = useMemo(() => {
         return <div className='container'>
             {(tradingSetups.map(tradingSetup => {
-                return <TradingSetupInfo key={tradingSetup.id} tradingSetup={tradingSetup} clickConfig={clickShowTradingSetupConfig}   onForceBuy={clickTradingSetupForceBuy} onForceSell={clickTradingSetupForceSell}/>
+                return <TradingSetupInfo key={tradingSetup.id} tradingSetup={tradingSetup} clickConfig={clickShowTradingSetupConfig}   onForceBuy={clickTradingSetupForceBuy} onForceSell={clickTradingSetupForceSell} onHistory={clickHistory}/>
             }))}
         </div>
     }, [tradingSetups])
@@ -189,6 +195,9 @@ export default function Home()
             </div>
             <Modal show={configTradingSetupShowing} clickClose={() => setConfigTradingSetupShowing(false)}>
                 <TradingSetupConfigForm tradingSetup={selectedTradingSetupShowing} prices={prices} availableSignals={AVAILABLE_SIGNAL_IDS} availableIntervals={AVAILABLE_INTERVALS} onCreate={clickTradingSetupAdded} onSave={clickTradingSetupSave} onDelete={clickTradingSetupDelete} />
+            </Modal>
+            <Modal show={historyTradingSetupShowing} clickClose={() => setHistoryTradingSetupShowing(false)}>
+                <TradingSetupHistoryView tradingSetup={selectedTradingSetupShowing!}/>
             </Modal>
         </div>
     )

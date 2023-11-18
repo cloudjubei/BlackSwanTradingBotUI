@@ -182,6 +182,44 @@ export interface StringObject {
 /**
  * 
  * @export
+ * @interface TradingSetupActionModel
+ */
+export interface TradingSetupActionModel {
+    /**
+     * 
+     * @type {TradingSetupActionType}
+     * @memberof TradingSetupActionModel
+     */
+    'type': TradingSetupActionType;
+    /**
+     * 
+     * @type {number}
+     * @memberof TradingSetupActionModel
+     */
+    'action': number;
+}
+
+
+/**
+ * 
+ * @export
+ * @enum {string}
+ */
+
+export const TradingSetupActionType = {
+    Manual: 'MANUAL',
+    Signal: 'SIGNAL',
+    Takeprofit: 'TAKEPROFIT',
+    Stoploss: 'STOPLOSS',
+    Termination: 'TERMINATION'
+} as const;
+
+export type TradingSetupActionType = typeof TradingSetupActionType[keyof typeof TradingSetupActionType];
+
+
+/**
+ * 
+ * @export
  * @interface TradingSetupConfigModel
  */
 export interface TradingSetupConfigModel {
@@ -329,6 +367,12 @@ export interface TradingSetupModel {
      * @type {number}
      * @memberof TradingSetupModel
      */
+    'updateTimestamp': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof TradingSetupModel
+     */
     'timeoutTimestamp': number;
     /**
      * 
@@ -350,34 +394,22 @@ export interface TradingSetupModel {
     'highestPriceAmount': string;
     /**
      * 
-     * @type {string}
+     * @type {TradingSetupActionModel}
      * @memberof TradingSetupModel
      */
-    'tradeEntryPriceAmount': string;
+    'currentAction': TradingSetupActionModel;
     /**
      * 
-     * @type {string}
+     * @type {Array<TradingSetupTradeModel>}
      * @memberof TradingSetupModel
      */
-    'tradeLowestPriceAmount': string;
+    'openTrades': Array<TradingSetupTradeModel>;
     /**
      * 
-     * @type {string}
+     * @type {Array<TradingSetupTradeModel>}
      * @memberof TradingSetupModel
      */
-    'tradeHighestPriceAmount': string;
-    /**
-     * 
-     * @type {Array<TradingTransactionModel>}
-     * @memberof TradingSetupModel
-     */
-    'transactions': Array<TradingTransactionModel>;
-    /**
-     * 
-     * @type {{ [key: string]: TradingTransactionModel; }}
-     * @memberof TradingSetupModel
-     */
-    'openTransactions': { [key: string]: TradingTransactionModel; };
+    'finishedTrades': Array<TradingSetupTradeModel>;
     /**
      * 
      * @type {number}
@@ -396,11 +428,121 @@ export interface TradingSetupModel {
 export const TradingSetupStatusType = {
     Initial: 'INITIAL',
     Running: 'RUNNING',
+    Terminating: 'TERMINATING',
     Terminated: 'TERMINATED'
 } as const;
 
 export type TradingSetupStatusType = typeof TradingSetupStatusType[keyof typeof TradingSetupStatusType];
 
+
+/**
+ * 
+ * @export
+ * @interface TradingSetupTradeModel
+ */
+export interface TradingSetupTradeModel {
+    /**
+     * 
+     * @type {string}
+     * @memberof TradingSetupTradeModel
+     */
+    'id': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof TradingSetupTradeModel
+     */
+    'startingFirstAmount': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof TradingSetupTradeModel
+     */
+    'startingSecondAmount': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof TradingSetupTradeModel
+     */
+    'firstAmount': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof TradingSetupTradeModel
+     */
+    'secondAmount': string;
+    /**
+     * 
+     * @type {number}
+     * @memberof TradingSetupTradeModel
+     */
+    'startTimestamp': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof TradingSetupTradeModel
+     */
+    'updateTimestamp': number;
+    /**
+     * 
+     * @type {string}
+     * @memberof TradingSetupTradeModel
+     */
+    'entryPriceAmount': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof TradingSetupTradeModel
+     */
+    'lowestPriceAmount': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof TradingSetupTradeModel
+     */
+    'highestPriceAmount': string;
+    /**
+     * 
+     * @type {TradingSetupActionModel}
+     * @memberof TradingSetupTradeModel
+     */
+    'currentAction': TradingSetupActionModel;
+    /**
+     * 
+     * @type {string}
+     * @memberof TradingSetupTradeModel
+     */
+    'status': TradingSetupTradeModelStatusEnum;
+    /**
+     * 
+     * @type {TradingTransactionModel}
+     * @memberof TradingSetupTradeModel
+     */
+    'buyTransaction': TradingTransactionModel;
+    /**
+     * 
+     * @type {Array<TradingTransactionModel>}
+     * @memberof TradingSetupTradeModel
+     */
+    'sellTransactions': Array<TradingTransactionModel>;
+    /**
+     * 
+     * @type {number}
+     * @memberof TradingSetupTradeModel
+     */
+    'failedDueToMarketMaking': number;
+}
+
+export const TradingSetupTradeModelStatusEnum = {
+    BuyPending: 'BUY_PENDING',
+    BuyDone: 'BUY_DONE',
+    SellPending: 'SELL_PENDING',
+    SellPartiallyDone: 'SELL_PARTIALLY_DONE',
+    Complete: 'COMPLETE',
+    Cancelled: 'CANCELLED'
+} as const;
+
+export type TradingSetupTradeModelStatusEnum = typeof TradingSetupTradeModelStatusEnum[keyof typeof TradingSetupTradeModelStatusEnum];
 
 /**
  * 
@@ -495,6 +637,12 @@ export interface TradingTransactionModel {
      * @memberof TradingTransactionModel
      */
     'secondAmount': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof TradingTransactionModel
+     */
+    'offeredAmount': string;
     /**
      * 
      * @type {string}
