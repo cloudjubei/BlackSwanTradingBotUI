@@ -15,8 +15,8 @@ interface Props {
 
 export const TradingSetupInfo = ({ tradingSetup, clickConfig, onForceBuy, onForceSell, onHistory }: Props) =>
 {
-  const startingAmount = MathUtils.Shorten(MathUtils.AddNumbers(tradingSetup.startingSecondAmount, (MathUtils.MultiplyNumbers(tradingSetup.currentPriceAmount, tradingSetup.startingFirstAmount))), 2)
-  const currentAmount = MathUtils.Shorten(MathUtils.AddNumbers(tradingSetup.secondAmount, (MathUtils.MultiplyNumbers(tradingSetup.currentPriceAmount, tradingSetup.firstAmount))), 2)
+  const startingAmount = MathUtils.AddNumbers(tradingSetup.startingSecondAmount, (MathUtils.MultiplyNumbers(tradingSetup.currentPriceAmount, tradingSetup.startingFirstAmount)))
+  const currentAmount = MathUtils.AddNumbers(tradingSetup.secondAmount, MathUtils.MultiplyNumbers(tradingSetup.currentPriceAmount, tradingSetup.firstAmount))
   const profitAmount = MathUtils.Shorten(MathUtils.SubtractNumbers(currentAmount, startingAmount), 2)
   const profitPercentage = MathUtils.Shorten(MathUtils.DivideNumbers(profitAmount, startingAmount), 3)
   const color = MathUtils.IsZero(profitAmount) ? "Black" : MathUtils.IsBiggerThanZero(profitAmount) ? "Green" : "Red"
@@ -64,13 +64,13 @@ export const TradingSetupInfo = ({ tradingSetup, clickConfig, onForceBuy, onForc
       <article id={'price'} className={`section__item`}>
         <AttachMoney style={{color:"Blue"}}/>
         <span className="section__item__name" style={{color:"Blue"}}>Price:</span>
-        <span className="section__item__value" style={{color:"Blue"}}>{tradingSetup.currentPriceAmount}</span>
+        <span className="section__item__value" style={{color:"Blue"}}>{MathUtils.Shorten(tradingSetup.currentPriceAmount, 2)}</span>
       </article>
       <span className="section__header">Current</span>
       <article id={'current'} className={`section__item`}>
         <AttachMoney style={{color}}/>
         <span className="section__item__name" style={{color}}>Total:</span>
-        <span className="section__item__value" style={{color}}>{currentAmount}<span>({profitPercentage}%) {profitAmount}</span></span>
+        <span className="section__item__value" style={{color}}>{MathUtils.Shorten(currentAmount, 2)}<span>({profitPercentage}%) {profitAmount}</span></span>
       </article>
 
       {openTransactionViews}
@@ -88,12 +88,12 @@ export const TradingSetupInfo = ({ tradingSetup, clickConfig, onForceBuy, onForc
       <article id={'firstToken'} className={`section__item`}>
         <CurrencyBitcoin/>
         <span className="section__item__name">{tradingSetup.config.firstToken} Amount:</span>
-        <span className="section__item__value">{MathUtils.Max("0", tradingSetup.firstAmount)}</span>
+        <span className="section__item__value">{tradingSetup.firstAmount}</span>
       </article>
       <article id={'secondToken'} className={`section__item`}>
         <Money/>
         <span className="section__item__name">{tradingSetup.config.secondToken} Amount:</span>
-        <span className="section__item__value">{MathUtils.Shorten(MathUtils.Max("0", tradingSetup.secondAmount))}</span>
+        <span className="section__item__value">{MathUtils.Shorten(tradingSetup.secondAmount, 2)}</span>
       </article>
     </main>
   </article>

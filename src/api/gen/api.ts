@@ -400,6 +400,12 @@ export interface TradingSetupModel {
     'currentAction': TradingSetupActionModel;
     /**
      * 
+     * @type {TradingSetupActionModel}
+     * @memberof TradingSetupModel
+     */
+    'manualOverrideAction'?: TradingSetupActionModel;
+    /**
+     * 
      * @type {Array<TradingSetupTradeModel>}
      * @memberof TradingSetupModel
      */
@@ -507,6 +513,12 @@ export interface TradingSetupTradeModel {
      * @memberof TradingSetupTradeModel
      */
     'currentAction': TradingSetupActionModel;
+    /**
+     * 
+     * @type {TradingSetupActionModel}
+     * @memberof TradingSetupTradeModel
+     */
+    'manualOverrideAction'?: TradingSetupActionModel;
     /**
      * 
      * @type {string}

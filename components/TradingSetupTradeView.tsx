@@ -17,8 +17,9 @@ export const TradingSetupTradeView = ({ tradingSetup, trade }: Props) =>
   const action = `${trade.currentAction.type} ${trade.currentAction.action === 0 ? 'DO NOTHING' : trade.currentAction.action > 0 ? 'BUY' : 'SELL'}`
   
   const entryPrice = trade.entryPriceAmount
-  const startAmount = MathUtils.AddNumbers(MathUtils.MultiplyNumbers(trade.startingFirstAmount, entryPrice), trade.startingSecondAmount)
+  const startAmount = MathUtils.AddNumbers(MathUtils.MultiplyNumbers(trade.startingFirstAmount, tradingSetup.currentPriceAmount), trade.startingSecondAmount)
   const currentAmount = MathUtils.AddNumbers(MathUtils.MultiplyNumbers(trade.firstAmount, tradingSetup.currentPriceAmount), trade.secondAmount)
+
   const profitAmount = MathUtils.Shorten(MathUtils.SubtractNumbers(currentAmount, startAmount), 2)
   const profitPercentage = MathUtils.Shorten(MathUtils.DivideNumbers(profitAmount, startAmount), 3)
   const color = MathUtils.IsZero(profitAmount) ? "Black" : MathUtils.IsBiggerThanZero(profitAmount) ? "Green" : "Red"
