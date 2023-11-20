@@ -12,6 +12,7 @@ export const TradingSetupTradeView = ({ tradingSetup, trade }: Props) =>
 {
   const status = trade.status
   const isBuying = status === TradingSetupTradeModelStatusEnum.BuyPending
+  const isSelling = status === TradingSetupTradeModelStatusEnum.SellPending || status === TradingSetupTradeModelStatusEnum.SellPartiallyDone
   const statusText = isBuying ? "Buying" : status === TradingSetupTradeModelStatusEnum.BuyDone ? "Waiting to Sell" : status === TradingSetupTradeModelStatusEnum.Complete ? "Complete" : "Selling"
   
   const action = `${trade.currentAction.type} ${trade.currentAction.action === 0 ? 'DO NOTHING' : trade.currentAction.action > 0 ? 'BUY' : 'SELL'}`
@@ -31,10 +32,44 @@ export const TradingSetupTradeView = ({ tradingSetup, trade }: Props) =>
 
   const stopLossTriggerAmount = tradingSetup.config.stopLoss != null ? MathUtils.Shorten(MathUtils.MultiplyNumbers(entryPrice, "" + (1.0 - (tradingSetup.config.stopLoss!.percentage ?? 0)))) : "0"
   
+  const sellTransactions = useMemo(() => {
+    return (trade.sellTransactions.map(transaction => {
+      const firstTitle = !transaction.complete ? "Trying to sell" : transaction.canceled ? "Sell Canceled" : "Sold"
+      const firstAmount = transaction.complete ? transaction.firstAmount : transaction.offeredAmount
+
+      const secondTitle = !transaction.complete ? "Expecting" : transaction.canceled ? "Wanted" : "Got"
+      const secondAmount = transaction.complete ? transaction.secondAmount : MathUtils.Shorten(MathUtils.MultiplyNumbers(transaction.offeredAmount, transaction.wantedPriceAmount), 2)
+      return <div className='trade_section'>
+          <div id={'sell_token'} className="trade_item">
+            <AttachMoney style={{color: "Blue"}}/>
+            <span className="trade_item_name" style={{color: "Blue"}}>{firstTitle}</span>
+            <span className="trade_item_value" style={{color: "Blue"}}>{firstAmount} {tradingSetup.config.firstToken}</span>
+          </div>
+          <div id={'sell_price'} className="trade_item">
+            <AttachMoney style={{color: "Blue"}}/>
+            <span className="trade_item_name" style={{color: "Blue"}}>{secondTitle} {secondAmount} {tradingSetup.config.secondToken}</span>
+            <span className="trade_item_value" style={{color: "Blue"}}>@ ${transaction.wantedPriceAmount}</span>
+          </div>
+      </div>
+    }))
+  }, [trade.sellTransactions])
+
   return <div key={"trade-" + trade.id} className="trade">
     <div className="trade_section_title">Trade - {statusText} - {action}</div>
     <div className="trade_section_title">Start @ {`${new Date(trade.startTimestamp).toLocaleTimeString('en-gb', { timeStyle: 'short'})} ${new Date(trade.startTimestamp).toLocaleDateString('en-gb', { dateStyle:'short' })}`}</div>
-    {!isBuying && <div className="trade_section">
+    {isBuying && <div className="trade_section">
+      <div id={'buy_token'} className="trade_item">
+        <AttachMoney style={{color: 'Green'}}/>
+        <span className="trade_item_name" style={{color: 'Green'}}>{tradingSetup.config.firstToken}</span>
+        <span className="trade_item_value" style={{color: 'Green'}}>Trying to buy</span>
+      </div>
+      <div id={'buy_price'} className="trade_item">
+        <AttachMoney style={{color: 'Green'}}/>
+        <span className="trade_item_name" style={{color: 'Green'}}>Offering {MathUtils.Shorten(trade.buyTransaction.offeredAmount, 2)} {tradingSetup.config.secondToken}</span>
+        <span className="trade_item_value" style={{color: 'Green'}}>@ ${trade.buyTransaction.wantedPriceAmount}</span>
+      </div>
+    </div>}
+    {!isBuying && !isSelling && <div className="trade_section">
       <div id={'current'} className="trade_item">
         <AttachMoney style={{color}}/>
         <span className="trade_item_name" style={{color}}>Total:</span>
@@ -63,6 +98,7 @@ export const TradingSetupTradeView = ({ tradingSetup, trade }: Props) =>
         <span className="trade_item_value" style={{color:"Purple"}}>{stopLossTriggerAmount}</span>
       </div>}
     </div>}
+    {isSelling && sellTransactions}
     <div className="trade_section_title">Tokens</div>
     <div className="trade_section">
       <div id={'firstToken'} className="trade_item">

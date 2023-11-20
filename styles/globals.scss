@@ -52,7 +52,7 @@
 
 	.trade_item {
 		display: grid;
-		grid-template-columns: 1fr 10fr 10fr;
+		grid-template-columns: 1fr 12fr 10fr;
 		align-items: center;
 		overflow: hidden;
 		cursor: pointer;
@@ -155,12 +155,20 @@
 	  
 	  .icon {
 		fill: #fff;
-		opacity: .35;
-		width: 50px;
+		opacity: .5;
+		height: 50%;
+		width: 50%;
 		position: absolute;
 		top: 50%;
 		left: var(--start);
 		transform: translate(-50%, -50%);
+		
+		&.error{
+			fill: #ff0000;
+			opacity: 1;
+			height: 70%;
+			width: 70%;
+		}
 	  }
 	  .buttons_container{
 		display:block;
@@ -219,7 +227,7 @@
 	
 	&__item {
 	  display: grid;
-	  grid-template-columns: 1fr 4fr 5fr;
+	  grid-template-columns: 1fr 10fr 12fr;
 	  align-items: center;
 	  padding: 10px 30px 10px 10px;
 	  overflow: hidden;

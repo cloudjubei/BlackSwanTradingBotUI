@@ -47,8 +47,8 @@ export const TradingSetupInfo = ({ tradingSetup, clickConfig, onForceBuy, onForc
   return <article key={"info-" + tradingSetup.id} className="section">
     <header>
       {tradingSetup.status == TradingSetupStatusType.Initial && <TripOrigin className="icon"/>}
-      {tradingSetup.status == TradingSetupStatusType.Running && <Bolt className="icon" color="success"/>}
-      {tradingSetup.status == TradingSetupStatusType.Terminated && <Dangerous className="icon" color="error"/>}
+      {tradingSetup.status == TradingSetupStatusType.Running && <Bolt className="icon"/>}
+      {tradingSetup.status == TradingSetupStatusType.Terminated && <Dangerous className="icon error"/>}
       <div className="buttons_container">
         <Button className="button_config" onClick={() => clickConfig(tradingSetup)}><BuildCircle color="action"/></Button>
         <Button className="button_buy" onClick={() => onForceBuy(tradingSetup)}>BUY</Button>
@@ -70,7 +70,12 @@ export const TradingSetupInfo = ({ tradingSetup, clickConfig, onForceBuy, onForc
       <article id={'current'} className={`section__item`}>
         <AttachMoney style={{color}}/>
         <span className="section__item__name" style={{color}}>Total:</span>
-        <span className="section__item__value" style={{color}}>{MathUtils.Shorten(currentAmount, 2)}<span>({profitPercentage}%) {profitAmount}</span></span>
+        <span className="section__item__value" style={{color}}>{MathUtils.Shorten(currentAmount, 2)}</span>
+      </article>
+      <article id={'current'} className={`section__item`}>
+        <AttachMoney style={{color}}/>
+        <span className="section__item__name" style={{color}}>Profit: ({profitPercentage}%)</span>
+        <span className="section__item__value" style={{color}}>{MathUtils.Shorten(profitAmount, 2)}</span>
       </article>
 
       {openTransactionViews}
