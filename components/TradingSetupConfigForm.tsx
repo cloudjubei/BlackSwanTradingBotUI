@@ -1,9 +1,9 @@
 import React, { useEffect, useMemo } from 'react'
-import { AttachMoney, Cancel, DeleteForever, Save, Sell } from '@mui/icons-material'
+import { AttachMoney, Bolt, Cancel, DeleteForever, Pause, Save, Sell } from '@mui/icons-material'
 import { Button, Checkbox, FormControl, FormControlLabel, InputLabel, MenuItem, Select, TextField } from '@mui/material'
 import { FormProvider, SubmitHandler, useForm } from 'react-hook-form'
 import { TextInput } from './Input/TextInput'
-import { TradingSetupConfigModel, TradingSetupModel, TradingStopLossConfigModel, TradingTakeProfitConfigModel, TradingTakeProfitTrailingStopConfigModel } from '../src/api/gen'
+import { TradingSetupConfigModel, TradingSetupModel, TradingSetupStatusType, TradingStopLossConfigModel, TradingTakeProfitConfigModel, TradingTakeProfitTrailingStopConfigModel } from '../src/api/gen'
 import MathUtils from '../src/commons/lib/mathUtils'
 
 export interface TradingSetupConfigFormData
@@ -47,9 +47,10 @@ export type Props = {
 	onCreate: (id: string, startingFirstAmount: string, startingSecondAmount: string, tradingSetup: TradingSetupConfigModel) => void
 	onSave: (tradingSetup: TradingSetupModel, config: TradingSetupConfigModel) => void
 	onDelete: (tradingSetup: TradingSetupModel) => void
+	onTogglePause: (tradingSetup: TradingSetupModel) => void
 }
 
-const Page: React.FC<Props> = ({ tradingSetup, prices, availableSignals, availableIntervals, onCreate, onSave, onDelete }: Props) => {
+const Page: React.FC<Props> = ({ tradingSetup, prices, availableSignals, availableIntervals, onCreate, onSave, onDelete, onTogglePause }: Props) => {
     const onSubmit = (formData: TradingSetupConfigFormData) => {
 		if (isViewOnly){
 			onSave(tradingSetup!!,
@@ -432,6 +433,9 @@ const Page: React.FC<Props> = ({ tradingSetup, prices, availableSignals, availab
 					</Button>}
 					{isViewOnly && <Button startIcon={<Save />} type='submit' variant='contained' style={{ marginRight: '5px' }}>
 						Save Setup
+					</Button>}
+					{isViewOnly && <Button startIcon={tradingSetup.status === TradingSetupStatusType.Running ? <Pause /> : <Bolt/>} variant='contained' style={{ marginRight: '5px' }} color='info' onClick={() => onTogglePause(tradingSetup)}>
+						{tradingSetup.status === TradingSetupStatusType.Running ? "Pause Setup" : "Unpause Setup"} 
 					</Button>}
 					{isViewOnly && <Button startIcon={<DeleteForever />} variant='contained' style={{ marginRight: '5px' }} color='error' onClick={() => onDelete(tradingSetup)}>
 						Delete Setup

@@ -434,6 +434,7 @@ export interface TradingSetupModel {
 export const TradingSetupStatusType = {
     Initial: 'INITIAL',
     Running: 'RUNNING',
+    Paused: 'PAUSED',
     Terminating: 'TERMINATING',
     Terminated: 'TERMINATED'
 } as const;
@@ -2321,6 +2322,39 @@ export const TransactionApiAxiosParamCreator = function (configuration?: Configu
                 options: localVarRequestOptions,
             };
         },
+        /**
+         * 
+         * @param {string} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        transactionTogglePause: async (id: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('transactionTogglePause', 'id', id)
+            const localVarPath = `/transactions/togglePause/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
     }
 };
 
@@ -2396,6 +2430,16 @@ export const TransactionApiFp = function(configuration?: Configuration) {
             const localVarAxiosArgs = await localVarAxiosParamCreator.transactionGetWalletMarginLocked(options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
+        /**
+         * 
+         * @param {string} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async transactionTogglePause(id: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<TradingSetupModel>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.transactionTogglePause(id, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
     }
 };
 
@@ -2463,6 +2507,15 @@ export const TransactionApiFactory = function (configuration?: Configuration, ba
          */
         transactionGetWalletMarginLocked(options?: any): AxiosPromise<WalletModel> {
             return localVarFp.transactionGetWalletMarginLocked(options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {string} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        transactionTogglePause(id: string, options?: any): AxiosPromise<TradingSetupModel> {
+            return localVarFp.transactionTogglePause(id, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -2544,6 +2597,17 @@ export class TransactionApi extends BaseAPI {
      */
     public transactionGetWalletMarginLocked(options?: AxiosRequestConfig) {
         return TransactionApiFp(this.configuration).transactionGetWalletMarginLocked(options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {string} id 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof TransactionApi
+     */
+    public transactionTogglePause(id: string, options?: AxiosRequestConfig) {
+        return TransactionApiFp(this.configuration).transactionTogglePause(id, options).then((request) => request(this.axios, this.basePath));
     }
 }
 

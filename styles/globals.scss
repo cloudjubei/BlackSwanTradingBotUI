@@ -163,6 +163,12 @@
 		left: var(--start);
 		transform: translate(-50%, -50%);
 		
+		&.pause{
+			fill: #0000ff;
+			opacity: 1;
+			height: 60%;
+			width: 60%;
+		}
 		&.error{
 			fill: #ff0000;
 			opacity: 1;

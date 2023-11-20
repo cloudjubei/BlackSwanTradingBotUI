@@ -1,5 +1,5 @@
 import React, { useMemo } from "react"
-import { AirplaneTicket, AttachMoney, AttachMoneySharp, Bolt, BuildCircle, CurrencyBitcoin, CurrencyExchange, Dangerous, Done, Error, History, LocalAtm, Money, Paid, Sell, Timeline, TripOrigin } from '@mui/icons-material'
+import { AirplaneTicket, AttachMoney, AttachMoneySharp, Bolt, BuildCircle, CurrencyBitcoin, CurrencyExchange, Dangerous, Done, Error, History, LocalAtm, Money, Paid, Pause, Sell, Timeline, TripOrigin } from '@mui/icons-material'
 import { TradingSetupModel, TradingSetupStatusType, TradingSetupTradeModelStatusEnum, TradingTransactionModel } from "../src/api/gen"
 import MathUtils from "../src/commons/lib/mathUtils"
 import { Button } from "@mui/material"
@@ -46,9 +46,11 @@ export const TradingSetupInfo = ({ tradingSetup, clickConfig, onForceBuy, onForc
 
   return <article key={"info-" + tradingSetup.id} className="section">
     <header>
-      {tradingSetup.status == TradingSetupStatusType.Initial && <TripOrigin className="icon"/>}
-      {tradingSetup.status == TradingSetupStatusType.Running && <Bolt className="icon"/>}
-      {tradingSetup.status == TradingSetupStatusType.Terminated && <Dangerous className="icon error"/>}
+      {tradingSetup.status === TradingSetupStatusType.Initial && <TripOrigin className="icon"/>}
+      {tradingSetup.status === TradingSetupStatusType.Running && <Bolt className="icon"/>}
+      {tradingSetup.status === TradingSetupStatusType.Paused && <Pause className="icon pause"/>}
+      {tradingSetup.status === TradingSetupStatusType.Terminating && <Dangerous className="icon error"/>}
+      {tradingSetup.status === TradingSetupStatusType.Terminated && <Dangerous className="icon error"/>}
       <div className="buttons_container">
         <Button className="button_config" onClick={() => clickConfig(tradingSetup)}><BuildCircle color="action"/></Button>
         <Button className="button_buy" onClick={() => onForceBuy(tradingSetup)}>BUY</Button>
@@ -79,7 +81,6 @@ export const TradingSetupInfo = ({ tradingSetup, clickConfig, onForceBuy, onForc
       </article>
 
       {openTransactionViews}
-      
       {finishedTransactionView}
       {cancelledTransactionView}
 

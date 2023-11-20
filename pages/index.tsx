@@ -126,6 +126,20 @@ export default function Home()
             setSelectedTradingSetupShowing(undefined)
         ).catch(console.error)
     }
+    const clickTradingSetupTogglePause = (tradingSetup: TradingSetupModel) => {
+        setConfigTradingSetupShowing(false)
+        
+        const action = async () => {
+            const updatedSetup = await transactionApi.transactionTogglePause(tradingSetup.id)
+            const setups = [...tradingSetups]
+            const index = setups.findIndex(s => s.id === updatedSetup.data.id)
+            setups[index] = updatedSetup.data
+            setTradingSetups([...setups])
+        }
+        action().then(() =>
+            setSelectedTradingSetupShowing(undefined)
+        ).catch(console.error)
+    }
     const clickTradingSetupForceBuy = (tradingSetup: TradingSetupModel) => {
         setConfigTradingSetupShowing(false)
         const action = async () => {
@@ -194,7 +208,7 @@ export default function Home()
                 <button className="menu-button" onClick={clickAddTradingSetup}>{"Add Setup"}</button>
             </div>
             <Modal show={configTradingSetupShowing} clickClose={() => setConfigTradingSetupShowing(false)}>
-                <TradingSetupConfigForm tradingSetup={selectedTradingSetupShowing} prices={prices} availableSignals={AVAILABLE_SIGNAL_IDS} availableIntervals={AVAILABLE_INTERVALS} onCreate={clickTradingSetupAdded} onSave={clickTradingSetupSave} onDelete={clickTradingSetupDelete} />
+                <TradingSetupConfigForm tradingSetup={selectedTradingSetupShowing} prices={prices} availableSignals={AVAILABLE_SIGNAL_IDS} availableIntervals={AVAILABLE_INTERVALS} onCreate={clickTradingSetupAdded} onSave={clickTradingSetupSave} onDelete={clickTradingSetupDelete} onTogglePause={clickTradingSetupTogglePause} />
             </Modal>
             <Modal show={historyTradingSetupShowing} clickClose={() => setHistoryTradingSetupShowing(false)}>
                 <TradingSetupHistoryView tradingSetup={selectedTradingSetupShowing!}/>
