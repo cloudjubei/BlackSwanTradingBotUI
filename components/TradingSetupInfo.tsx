@@ -1,6 +1,6 @@
 import React, { useMemo } from "react"
 import { AirplaneTicket, AttachMoney, AttachMoneySharp, Bolt, BuildCircle, CurrencyBitcoin, CurrencyExchange, Dangerous, Done, Error, History, LocalAtm, Money, Paid, Pause, Sell, Timeline, TripOrigin } from '@mui/icons-material'
-import { TradingSetupModel, TradingSetupStatusType, TradingSetupTradeModelStatusEnum, TradingTransactionModel } from "../src/api/gen"
+import { TradingSetupModel, TradingSetupStatusType, TradingSetupTradeModel, TradingSetupTradeModelStatusEnum, TradingTransactionModel } from "../src/api/gen"
 import MathUtils from "../src/commons/lib/mathUtils"
 import { Button } from "@mui/material"
 import { TradingSetupTradeView } from "./TradingSetupTradeView"
@@ -13,10 +13,27 @@ interface Props {
   onHistory: (tradingSetup: TradingSetupModel) => void
 }
 
+const GetStartingTotalAmount = (setup: TradingSetupModel) : string =>
+{
+    return MathUtils.AddNumbers(MathUtils.MultiplyNumbers(setup.startingFirstAmount, setup.currentPriceAmount), setup.startingSecondAmount)
+}
+
+const GetTotalAmount = (setup: TradingSetupModel) : string =>
+{
+    const ownTotalAmount = MathUtils.AddNumbers(MathUtils.MultiplyNumbers(setup.firstAmount, setup.currentPriceAmount), setup.secondAmount)
+    const tradesTotalAmount = MathUtils.AddManyNumbers(setup.openTrades.map(t => GetTradeTotalAmount(t, setup)))
+
+    return MathUtils.AddNumbers(ownTotalAmount, tradesTotalAmount)
+}
+const GetTradeTotalAmount = (trade: TradingSetupTradeModel, setup: TradingSetupModel) : string =>
+{
+    return MathUtils.AddNumbers(MathUtils.MultiplyNumbers(trade.firstAmount, setup.currentPriceAmount), trade.secondAmount)
+}
+
 export const TradingSetupInfo = ({ tradingSetup, clickConfig, onForceBuy, onForceSell, onHistory }: Props) =>
 {
-  const startingAmount = MathUtils.AddNumbers(tradingSetup.startingSecondAmount, (MathUtils.MultiplyNumbers(tradingSetup.currentPriceAmount, tradingSetup.startingFirstAmount)))
-  const currentAmount = MathUtils.AddNumbers(tradingSetup.secondAmount, MathUtils.MultiplyNumbers(tradingSetup.currentPriceAmount, tradingSetup.firstAmount))
+  const startingAmount = GetStartingTotalAmount(tradingSetup)
+  const currentAmount = GetTotalAmount(tradingSetup)
   const profitAmount = MathUtils.Shorten(MathUtils.SubtractNumbers(currentAmount, startingAmount), 2)
   const profitPercentage = MathUtils.Shorten(MathUtils.DivideNumbers(profitAmount, startingAmount), 3)
   const color = MathUtils.IsZero(profitAmount) ? "Black" : MathUtils.IsBiggerThanZero(profitAmount) ? "Green" : "Red"
