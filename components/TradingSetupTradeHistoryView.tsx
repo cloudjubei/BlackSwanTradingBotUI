@@ -32,10 +32,10 @@ export const TradingSetupTradeHistoryView = ({ tradingSetup, trade }: Props) =>
   const startAmount = MathUtils.AddNumbers(MathUtils.MultiplyNumbers(trade.startingFirstAmount, startingPrice), trade.startingSecondAmount)
   // const startingSecondAmount = trade.buyTransaction.secondAmount //COST
 
-  const hasSellTransactions = trade.sellTransactions.length > 0
-  const finalFirstAmount = hasSellTransactions ? MathUtils.SubtractNumbers(trade.buyTransaction.firstAmount, MathUtils.AddManyNumbers(trade.sellTransactions.map(t => t.firstAmount))) : '0'
-  const finalFirstAmountInSecond = hasSellTransactions ? MathUtils.MultiplyNumbers(finalFirstAmount, trade.sellTransactions[trade.sellTransactions.length-1].priceAmount) : '0'
-  const finalSecondAmount = hasSellTransactions ? MathUtils.AddManyNumbers(trade.sellTransactions.map(t => t.secondAmount)) : '0'
+  const hasSellTransactions = trade.sellTransactionsComplete.length > 0
+  const finalFirstAmount = hasSellTransactions ? MathUtils.SubtractNumbers(trade.buyTransaction.firstAmount, MathUtils.AddManyNumbers(trade.sellTransactionsComplete.map(t => t.firstAmount))) : '0'
+  const finalFirstAmountInSecond = hasSellTransactions ? MathUtils.MultiplyNumbers(finalFirstAmount, trade.sellTransactionsComplete[trade.sellTransactionsComplete.length-1].priceAmount) : '0'
+  const finalSecondAmount = hasSellTransactions ? MathUtils.AddManyNumbers(trade.sellTransactionsComplete.map(t => t.secondAmount)) : '0'
   const finalAmount = hasSellTransactions ? MathUtils.AddNumbers(finalFirstAmountInSecond, finalSecondAmount) : '0'
 
   const profitAmount = MathUtils.Shorten(MathUtils.SubtractNumbers(finalAmount, startAmount), 2)
@@ -44,7 +44,7 @@ export const TradingSetupTradeHistoryView = ({ tradingSetup, trade }: Props) =>
 
   const sellTransactions = useMemo(() => {
     if (!hasSellTransactions) { return <></> }
-		return trade.sellTransactions.map(transaction => {
+		return trade.sellTransactionsComplete.map(transaction => {
 				return <div className="trade_section">
           <div id={'sellEntry'} className="trade_item">
             <AttachMoneySharp/>
@@ -58,7 +58,7 @@ export const TradingSetupTradeHistoryView = ({ tradingSetup, trade }: Props) =>
           </div>
         </div>
 			})
-  }, [trade.sellTransactions])
+  }, [trade.sellTransactionsComplete])
  
   return <div key={"trade-" + trade.id} className="trade">
     <div className="trade_section_title" style={{color: statusColor}}>{status} @ {`${new Date(trade.updateTimestamp).toLocaleTimeString('en-gb', { timeStyle: 'short'})} ${new Date(trade.updateTimestamp).toLocaleDateString('en-gb', { dateStyle:'short' })}`}</div>

@@ -32,13 +32,19 @@ export const TradingSetupTradeView = ({ tradingSetup, trade }: Props) =>
 
   const stopLossTriggerAmount = tradingSetup.config.stopLoss != null ? MathUtils.Shorten(MathUtils.MultiplyNumbers(entryPrice, "" + (1.0 - (tradingSetup.config.stopLoss!.percentage ?? 0)))) : "0"
   
-  const sellTransactions = useMemo(() => {
-    return (trade.sellTransactions.map(transaction => {
-      const firstTitle = !transaction.complete ? "Trying to sell" : transaction.canceled ? "Sell Canceled" : "Sold"
-      const firstAmount = transaction.complete ? transaction.firstAmount : transaction.offeredAmount
+  const sellTransactionPending = useMemo(() => {
+    //TODO:
+    return <></>
+  }, [trade.sellTransactionPending])
 
-      const secondTitle = !transaction.complete ? "Expecting" : transaction.canceled ? "Wanted" : "Got"
-      const secondAmount = transaction.complete ? transaction.secondAmount : MathUtils.Shorten(MathUtils.MultiplyNumbers(transaction.offeredAmount, transaction.wantedPriceAmount), 2)
+  const sellTransactionsComplete = useMemo(() => {
+    return (trade.sellTransactionsComplete.map(transaction => {
+      const isFullyCancelled = transaction.canceled && MathUtils.IsZero(transaction.firstAmount)
+      const firstTitle = isFullyCancelled ? "Sell Canceled" : "Sold" + (transaction.canceled ? " + Cancelled " : "")
+      const firstAmount = isFullyCancelled ? transaction.offeredAmount : transaction.firstAmount
+
+      const secondTitle = isFullyCancelled ? "Wanted" : "Got"
+      const secondAmount = isFullyCancelled ? MathUtils.Shorten(MathUtils.MultiplyNumbers(transaction.offeredAmount, transaction.wantedPriceAmount), 2) : transaction.secondAmount
       return <div className='trade_section'>
           <div id={'sell_token'} className="trade_item">
             <AttachMoney style={{color: "Blue"}}/>
@@ -52,7 +58,7 @@ export const TradingSetupTradeView = ({ tradingSetup, trade }: Props) =>
           </div>
       </div>
     }))
-  }, [trade.sellTransactions])
+  }, [trade.sellTransactionsComplete])
 
   return <div key={"trade-" + trade.id} className="trade">
     <div className="trade_section_title">Trade - {statusText} - {action}</div>
@@ -98,7 +104,8 @@ export const TradingSetupTradeView = ({ tradingSetup, trade }: Props) =>
         <span className="trade_item_value" style={{color:"Purple"}}>{stopLossTriggerAmount}</span>
       </div>}
     </div>}
-    {isSelling && sellTransactions}
+    {sellTransactionPending}
+    {sellTransactionsComplete}
     <div className="trade_section_title">Tokens</div>
     <div className="trade_section">
       <div id={'firstToken'} className="trade_item">

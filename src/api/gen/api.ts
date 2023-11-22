@@ -534,10 +534,16 @@ export interface TradingSetupTradeModel {
     'buyTransaction': TradingTransactionModel;
     /**
      * 
+     * @type {TradingTransactionModel}
+     * @memberof TradingSetupTradeModel
+     */
+    'sellTransactionPending': TradingTransactionModel;
+    /**
+     * 
      * @type {Array<TradingTransactionModel>}
      * @memberof TradingSetupTradeModel
      */
-    'sellTransactions': Array<TradingTransactionModel>;
+    'sellTransactionsComplete': Array<TradingTransactionModel>;
     /**
      * 
      * @type {number}
