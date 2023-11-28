@@ -267,6 +267,12 @@ export interface TradingSetupConfigModel {
     'stopLoss'?: TradingStopLossConfigModel;
     /**
      * 
+     * @type {number}
+     * @memberof TradingSetupConfigModel
+     */
+    'sellTimeout': number;
+    /**
+     * 
      * @type {boolean}
      * @memberof TradingSetupConfigModel
      */

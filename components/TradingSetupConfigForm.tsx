@@ -16,6 +16,7 @@ export interface TradingSetupConfigFormData
     interval: string
     signal: string
 
+	sellTimeout: number
     terminationPercentageLoss?: number
 
     useTakeProfit: boolean
@@ -118,6 +119,8 @@ const Page: React.FC<Props> = ({ tradingSetup, prices, availableSignals, availab
             interval: "1m",
             signal: "bollingerLowWithRSI30Oversold",
 
+
+			sellTimeout: 0,
 			useTakeProfit: true,
 			useStopLoss: false,
 			stopLossPercentage: 0,
@@ -329,6 +332,17 @@ const Page: React.FC<Props> = ({ tradingSetup, prices, availableSignals, availab
 				</div>
 
 				<div className='input-group'>
+					<TextInput
+						className='input-item'
+						id='sellTimeout-input'
+						formField='sellTimeout'
+						formValidation={{ required: true, min: 0, valueAsNumber: true }}
+						placeholder='seconds'
+						label='Seconds to wait to restart trading after any sell'
+					/>
+				</div>
+
+				<div className='input-group'>
                 	<FormControlLabel control={<Checkbox />} label='Use Take Profit' checked={useTakeProfit} onChange={(_, checked) => formMethods.setValue('useTakeProfit', checked)}/>
 				</div>
 				{takeProfitPercentageInput}
@@ -368,7 +382,7 @@ const Page: React.FC<Props> = ({ tradingSetup, prices, availableSignals, availab
 						formField='stopLossTimeout'
 						formValidation={{ required: useStopLoss, min: 0, valueAsNumber: true }}
 						placeholder='seconds'
-						label='Seconds to wait to restart trading after a SL'
+						label='Seconds to wait to restart trading after a SL (this overrides the sell timeout)'
 					/>
 				</div>}
 
