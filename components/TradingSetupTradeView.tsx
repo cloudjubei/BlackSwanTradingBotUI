@@ -79,7 +79,7 @@ export const TradingSetupTradeView = ({ tradingSetup, trade }: Props) =>
       <div id={'current'} className="trade_item">
         <AttachMoney style={{color}}/>
         <span className="trade_item_name" style={{color}}>Total:</span>
-        <span className="trade_item_value" style={{color}}>{profitAmount}<span>({profitPercentage}%)</span></span>
+        <span className="trade_item_value" style={{color}}>{profitAmount}<span>({MathUtils.MultiplyNumbers("100", profitPercentage)}%)</span></span>
       </div>
       <div id={'currentTradeEntry'} className="trade_item">
         <AttachMoneySharp/>

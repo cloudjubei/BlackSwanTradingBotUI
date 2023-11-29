@@ -93,7 +93,7 @@ export const TradingSetupInfo = ({ tradingSetup, clickConfig, onForceBuy, onForc
       </article>
       <article id={'current'} className={`section__item`}>
         <AttachMoney style={{color}}/>
-        <span className="section__item__name" style={{color}}>Profit: ({profitPercentage}%)</span>
+        <span className="section__item__name" style={{color}}>Profit: ({MathUtils.MultiplyNumbers("100", profitPercentage)}%)</span>
         <span className="section__item__value" style={{color}}>{MathUtils.Shorten(profitAmount, 2)}</span>
       </article>
 
