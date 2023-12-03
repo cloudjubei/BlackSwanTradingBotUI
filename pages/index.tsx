@@ -35,6 +35,7 @@ export default function Home()
 	const tradingApi = useMemo(() => { return new TradingApi(new Configuration({ basePath: "http://localhost:3001"})) }, [])
 	const transactionApi = useMemo(() => { return new TransactionApi(new Configuration({ basePath: "http://localhost:3001"})) }, [])
     const [selectedTradingSetupShowing, setSelectedTradingSetupShowing] = useState<TradingSetupModel | undefined>(undefined)
+    const [selectedCopyTradingSetupShowing, setSelectedCopyTradingSetupShowing] = useState<TradingSetupModel | undefined>(undefined)
     const [configTradingSetupShowing, setConfigTradingSetupShowing] = useState(false)
     const [historyTradingSetupShowing, setHistoryTradingSetupShowing] = useState(false)
 
@@ -81,6 +82,10 @@ export default function Home()
     }
     const clickShowTradingSetupConfig = (tradingSetup: TradingSetupModel) => {
         setSelectedTradingSetupShowing(tradingSetup)
+        setConfigTradingSetupShowing(true)
+    }
+    const clickCopyTradingSetupConfig = (tradingSetup: TradingSetupModel) => {
+        setSelectedCopyTradingSetupShowing({ ...tradingSetup, id: "" })
         setConfigTradingSetupShowing(true)
     }
     const clickAddTradingSetup = () => {
@@ -189,7 +194,7 @@ export default function Home()
     const tradingSetupsViews = useMemo(() => {
         return <div className='container'>
             {(tradingSetups.map(tradingSetup => {
-                return <TradingSetupInfo key={tradingSetup.id} tradingSetup={tradingSetup} clickConfig={clickShowTradingSetupConfig}   onForceBuy={clickTradingSetupForceBuy} onForceSell={clickTradingSetupForceSell} onHistory={clickHistory}/>
+                return <TradingSetupInfo key={tradingSetup.id} tradingSetup={tradingSetup} clickConfig={clickShowTradingSetupConfig} clickCopy={clickCopyTradingSetupConfig}  onForceBuy={clickTradingSetupForceBuy} onForceSell={clickTradingSetupForceSell} onHistory={clickHistory}/>
             }))}
         </div>
     }, [tradingSetups])
@@ -208,7 +213,7 @@ export default function Home()
                 <button className="menu-button" onClick={clickAddTradingSetup}>{"Add Setup"}</button>
             </div>
             <Modal show={configTradingSetupShowing} clickClose={() => setConfigTradingSetupShowing(false)}>
-                <TradingSetupConfigForm tradingSetup={selectedTradingSetupShowing} prices={prices} availableSignals={AVAILABLE_SIGNAL_IDS} availableIntervals={AVAILABLE_INTERVALS} onCreate={clickTradingSetupAdded} onSave={clickTradingSetupSave} onDelete={clickTradingSetupDelete} onTogglePause={clickTradingSetupTogglePause} />
+                <TradingSetupConfigForm tradingSetup={selectedTradingSetupShowing} tradingSetupToCopy={selectedCopyTradingSetupShowing} prices={prices} availableSignals={AVAILABLE_SIGNAL_IDS} availableIntervals={AVAILABLE_INTERVALS} onCreate={clickTradingSetupAdded} onSave={clickTradingSetupSave} onDelete={clickTradingSetupDelete} onTogglePause={clickTradingSetupTogglePause} />
             </Modal>
             <Modal show={historyTradingSetupShowing} clickClose={() => setHistoryTradingSetupShowing(false)}>
                 <TradingSetupHistoryView tradingSetup={selectedTradingSetupShowing!}/>

@@ -1,5 +1,5 @@
 import React, { useMemo } from "react"
-import { AirplaneTicket, AttachMoney, AttachMoneySharp, Bolt, BuildCircle, CurrencyBitcoin, CurrencyExchange, Dangerous, Done, Error, History, LocalAtm, Money, Paid, Pause, Sell, Timeline, TripOrigin } from '@mui/icons-material'
+import { AirplaneTicket, AttachMoney, AttachMoneySharp, Bolt, BuildCircle, CopyAll, CurrencyBitcoin, CurrencyExchange, Dangerous, Done, Error, History, LocalAtm, Money, Paid, Pause, Sell, Timeline, TripOrigin } from '@mui/icons-material'
 import { TradingSetupModel, TradingSetupStatusType, TradingSetupTradeModel, TradingSetupTradeModelStatusEnum, TradingTransactionModel } from "../src/api/gen"
 import MathUtils from "../src/commons/lib/mathUtils"
 import { Button } from "@mui/material"
@@ -8,6 +8,7 @@ import { TradingSetupTradeView } from "./TradingSetupTradeView"
 interface Props {
   tradingSetup: TradingSetupModel,
   clickConfig: (setup: TradingSetupModel) => void
+  clickCopy: (setup: TradingSetupModel) => void
 	onForceBuy: (tradingSetup: TradingSetupModel) => void
 	onForceSell: (tradingSetup: TradingSetupModel) => void
   onHistory: (tradingSetup: TradingSetupModel) => void
@@ -30,7 +31,7 @@ const GetTradeTotalAmount = (trade: TradingSetupTradeModel, setup: TradingSetupM
     return MathUtils.AddNumbers(MathUtils.MultiplyNumbers(trade.firstAmount, setup.currentPriceAmount), trade.secondAmount)
 }
 
-export const TradingSetupInfo = ({ tradingSetup, clickConfig, onForceBuy, onForceSell, onHistory }: Props) =>
+export const TradingSetupInfo = ({ tradingSetup, clickConfig, clickCopy, onForceBuy, onForceSell, onHistory }: Props) =>
 {
   const startingAmount = GetStartingTotalAmount(tradingSetup)
   const currentAmount = GetTotalAmount(tradingSetup)
@@ -70,6 +71,7 @@ export const TradingSetupInfo = ({ tradingSetup, clickConfig, onForceBuy, onForc
       {tradingSetup.status === TradingSetupStatusType.Terminated && <Dangerous className="icon error"/>}
       <div className="buttons_container">
         <Button className="button_config" onClick={() => clickConfig(tradingSetup)}><BuildCircle color="action"/></Button>
+        <Button className="button_copy" onClick={() => clickCopy(tradingSetup)}><CopyAll color="action"/></Button>
         <Button className="button_buy" onClick={() => onForceBuy(tradingSetup)}>BUY</Button>
         <Button className="button_sell" onClick={() => onForceSell(tradingSetup)} color="error">SELL</Button>
       </div>

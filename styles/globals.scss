@@ -113,7 +113,7 @@
 	header {
 	  --start: 15%;
 	  
-	  height: 130px;
+	  height: 160px;
 	  background-image: repeating-radial-gradient(circle at var(--start), transparent 0%, transparent 10%, rgba(54, 219, 89, .33) 10%, rgba(54, 219, 89, .33) 17%), linear-gradient(to right, #5bfa7c, #36db59);
 	  color: #fff;
 	  position: relative;
@@ -189,6 +189,12 @@
 			margin-top: 5px;
 		  }
 		  .button_sell {
+			background-color: #f3f4f6;
+			border-radius: 12px 0 0 12px;
+			box-shadow: 0 0 40px -10px rgba(0, 0, 0, .4);
+			margin-top: 5px;
+		  }
+		  .button_copy {
 			background-color: #f3f4f6;
 			border-radius: 12px 0 0 12px;
 			box-shadow: 0 0 40px -10px rgba(0, 0, 0, .4);

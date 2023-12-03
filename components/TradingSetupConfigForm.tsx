@@ -42,6 +42,7 @@ export interface TradingSetupConfigFormData
 
 export type Props = {
     tradingSetup?: TradingSetupModel
+	tradingSetupToCopy?: TradingSetupModel
 	prices: {[tokenPair: string] : string}
 	availableSignals: string[]
 	availableIntervals: string[]
@@ -51,7 +52,7 @@ export type Props = {
 	onTogglePause: (tradingSetup: TradingSetupModel) => void
 }
 
-const Page: React.FC<Props> = ({ tradingSetup, prices, availableSignals, availableIntervals, onCreate, onSave, onDelete, onTogglePause }: Props) => {
+const Page: React.FC<Props> = ({ tradingSetup, tradingSetupToCopy, prices, availableSignals, availableIntervals, onCreate, onSave, onDelete, onTogglePause }: Props) => {
     const onSubmit = (formData: TradingSetupConfigFormData) => {
 		if (isViewOnly){
 			onSave(tradingSetup!!,
@@ -214,29 +215,30 @@ const Page: React.FC<Props> = ({ tradingSetup, prices, availableSignals, availab
 
 
 	useEffect(() => {
-		if (tradingSetup){
+		const initialSetup = tradingSetup ?? tradingSetupToCopy
+		if (initialSetup){
 			formMethods.reset({
-				id: tradingSetup!.id,
-				startingFirstAmount: parseFloat(tradingSetup!.startingFirstAmount),
-				startingSecondAmount: parseFloat(tradingSetup!.startingSecondAmount),
+				id: initialSetup!.id,
+				startingFirstAmount: parseFloat(initialSetup!.startingFirstAmount),
+				startingSecondAmount: parseFloat(initialSetup!.startingSecondAmount),
 
-				useTakeProfit: tradingSetup!.config.takeProfit !== undefined,
-				takeProfitPercentage: tradingSetup!.config.takeProfit?.percentage,
-				useTrailingTakeProfit: tradingSetup!.config.takeProfit?.trailingStop !== undefined,
-				takeProfitTrailingDeltaPercentage: tradingSetup!.config.takeProfit?.trailingStop?.deltaPercentage,
-				takeProfitTrailingHardLimitPercentage: tradingSetup!.config.takeProfit?.trailingStop?.hardLimitPercentage,
+				useTakeProfit: initialSetup!.config.takeProfit !== undefined,
+				takeProfitPercentage: initialSetup!.config.takeProfit?.percentage,
+				useTrailingTakeProfit: initialSetup!.config.takeProfit?.trailingStop !== undefined,
+				takeProfitTrailingDeltaPercentage: initialSetup!.config.takeProfit?.trailingStop?.deltaPercentage,
+				takeProfitTrailingHardLimitPercentage: initialSetup!.config.takeProfit?.trailingStop?.hardLimitPercentage,
 
-				useStopLoss: tradingSetup!.config.stopLoss !== undefined,
-				stopLossPercentage: tradingSetup!.config.stopLoss?.percentage ?? 0,
-				stopLossTimeout: tradingSetup!.config.stopLoss?.timeout ?? 0,
+				useStopLoss: initialSetup!.config.stopLoss !== undefined,
+				stopLossPercentage: initialSetup!.config.stopLoss?.percentage ?? 0,
+				stopLossTimeout: initialSetup!.config.stopLoss?.timeout ?? 0,
 
-				use_LimitOrders: tradingSetup!.config.useLimitOrders,
-				use_LimitMakerOrders: tradingSetup!.config.useLimitMakerOrders,
+				use_LimitOrders: initialSetup!.config.useLimitOrders,
+				use_LimitMakerOrders: initialSetup!.config.useLimitMakerOrders,
 
-				...tradingSetup?.config,
+				...initialSetup?.config,
 			})
 		}
-	 }, [formMethods, tradingSetup])
+	 }, [formMethods, tradingSetup, tradingSetupToCopy])
 
 	return (
 		<FormProvider {...formMethods}>
