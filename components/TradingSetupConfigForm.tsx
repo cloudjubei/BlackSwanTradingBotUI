@@ -28,6 +28,7 @@ export interface TradingSetupConfigFormData
     useStopLoss: boolean
     stopLossPercentage: number,
     stopLossTimeout: number,
+	stopLossIsBasedOnMaxPrice: boolean,
 
     use_LimitOrders: boolean
     use_LimitMakerOrders: boolean
@@ -49,10 +50,9 @@ export type Props = {
 	onCreate: (id: string, startingFirstAmount: string, startingSecondAmount: string, tradingSetup: TradingSetupConfigModel) => void
 	onSave: (tradingSetup: TradingSetupModel, config: TradingSetupConfigModel) => void
 	onDelete: (tradingSetup: TradingSetupModel) => void
-	onTogglePause: (tradingSetup: TradingSetupModel) => void
 }
 
-const Page: React.FC<Props> = ({ tradingSetup, tradingSetupToCopy, prices, availableSignals, availableIntervals, onCreate, onSave, onDelete, onTogglePause }: Props) => {
+const Page: React.FC<Props> = ({ tradingSetup, tradingSetupToCopy, prices, availableSignals, availableIntervals, onCreate, onSave, onDelete }: Props) => {
     const onSubmit = (formData: TradingSetupConfigFormData) => {
 		if (isViewOnly){
 			onSave(tradingSetup!!,
@@ -71,7 +71,8 @@ const Page: React.FC<Props> = ({ tradingSetup, tradingSetupToCopy, prices, avail
 		
 					stopLoss: formData.useStopLoss ? {
 						percentage: formData.stopLossPercentage,
-						timeout: formData.stopLossTimeout
+						timeout: formData.stopLossTimeout,
+						isBasedOnMaxPrice: formData.stopLossIsBasedOnMaxPrice,
 					} as TradingStopLossConfigModel : undefined,
 		
 					useLimitOrders: formData.use_LimitOrders,
@@ -100,7 +101,8 @@ const Page: React.FC<Props> = ({ tradingSetup, tradingSetupToCopy, prices, avail
 
             stopLoss: formData.useStopLoss ? {
                 percentage: formData.stopLossPercentage,
-				timeout: formData.stopLossTimeout
+				timeout: formData.stopLossTimeout,
+				isBasedOnMaxPrice: formData.stopLossIsBasedOnMaxPrice,
             } as TradingStopLossConfigModel : undefined,
 
 			useLimitOrders: formData.use_LimitOrders,
@@ -126,6 +128,7 @@ const Page: React.FC<Props> = ({ tradingSetup, tradingSetupToCopy, prices, avail
 			useStopLoss: false,
 			stopLossPercentage: 0,
 			stopLossTimeout: 0,
+			stopLossIsBasedOnMaxPrice: false,
 			useTrailingTakeProfit: false,
             use_LimitOrders: true,
 			use_LimitMakerOrders: false,
@@ -148,6 +151,7 @@ const Page: React.FC<Props> = ({ tradingSetup, tradingSetupToCopy, prices, avail
 	const useTakeProfit = formMethods.watch('useTakeProfit')
 	const useTrailingTakeProfit = formMethods.watch('useTrailingTakeProfit')
 	const useStopLoss = formMethods.watch('useStopLoss')
+	const stopLossIsBasedOnMaxPrice = formMethods.watch('stopLossIsBasedOnMaxPrice')
 	const useLimitOrders = formMethods.watch('use_LimitOrders')
 	const useLimitMakerOrders = formMethods.watch('use_LimitMakerOrders')
 	const startingSecondAmount = formMethods.watch('startingSecondAmount')
@@ -370,6 +374,9 @@ const Page: React.FC<Props> = ({ tradingSetup, tradingSetupToCopy, prices, avail
                 	<FormControlLabel control={<Checkbox />} label='Use Stop Loss' checked={useStopLoss} onChange={(_, checked) => formMethods.setValue('useStopLoss', checked)}/>
 				</div>
 				{useStopLoss && <div className='input-group'>
+                	<FormControlLabel control={<Checkbox />} label='SL based on max price' checked={stopLossIsBasedOnMaxPrice} onChange={(_, checked) => formMethods.setValue('stopLossIsBasedOnMaxPrice', checked)}/>
+				</div>}
+				{useStopLoss && <div className='input-group'>
 					<TextInput
 						className='input-item'
 						id='stopLossPercentage-input'
@@ -449,9 +456,6 @@ const Page: React.FC<Props> = ({ tradingSetup, tradingSetupToCopy, prices, avail
 					</Button>}
 					{isViewOnly && <Button startIcon={<Save />} type='submit' variant='contained' style={{ marginRight: '5px' }}>
 						Save Setup
-					</Button>}
-					{isViewOnly && <Button startIcon={tradingSetup.status === TradingSetupStatusType.Running ? <Pause /> : <Bolt/>} variant='contained' style={{ marginRight: '5px' }} color='info' onClick={() => onTogglePause(tradingSetup)}>
-						{tradingSetup.status === TradingSetupStatusType.Running ? "Pause Setup" : "Unpause Setup"} 
 					</Button>}
 					{isViewOnly && <Button startIcon={<DeleteForever />} variant='contained' style={{ marginRight: '5px' }} color='error' onClick={() => onDelete(tradingSetup)}>
 						Delete Setup

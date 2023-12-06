@@ -131,6 +131,7 @@ export default function Home()
             setSelectedTradingSetupShowing(undefined)
         ).catch(console.error)
     }
+
     const clickTradingSetupTogglePause = (tradingSetup: TradingSetupModel) => {
         setConfigTradingSetupShowing(false)
         
@@ -194,7 +195,7 @@ export default function Home()
     const tradingSetupsViews = useMemo(() => {
         return <div className='container'>
             {(tradingSetups.map(tradingSetup => {
-                return <TradingSetupInfo key={tradingSetup.id} tradingSetup={tradingSetup} clickConfig={clickShowTradingSetupConfig} clickCopy={clickCopyTradingSetupConfig}  onForceBuy={clickTradingSetupForceBuy} onForceSell={clickTradingSetupForceSell} onHistory={clickHistory}/>
+                return <TradingSetupInfo key={tradingSetup.id} tradingSetup={tradingSetup} clickConfig={clickShowTradingSetupConfig} clickCopy={clickCopyTradingSetupConfig} clickPause={clickTradingSetupTogglePause}  onForceBuy={clickTradingSetupForceBuy} onForceSell={clickTradingSetupForceSell} onHistory={clickHistory}/>
             }))}
         </div>
     }, [tradingSetups])
@@ -213,7 +214,7 @@ export default function Home()
                 <button className="menu-button" onClick={clickAddTradingSetup}>{"Add Setup"}</button>
             </div>
             <Modal show={configTradingSetupShowing} clickClose={() => setConfigTradingSetupShowing(false)}>
-                <TradingSetupConfigForm tradingSetup={selectedTradingSetupShowing} tradingSetupToCopy={selectedCopyTradingSetupShowing} prices={prices} availableSignals={AVAILABLE_SIGNAL_IDS} availableIntervals={AVAILABLE_INTERVALS} onCreate={clickTradingSetupAdded} onSave={clickTradingSetupSave} onDelete={clickTradingSetupDelete} onTogglePause={clickTradingSetupTogglePause} />
+                <TradingSetupConfigForm tradingSetup={selectedTradingSetupShowing} tradingSetupToCopy={selectedCopyTradingSetupShowing} prices={prices} availableSignals={AVAILABLE_SIGNAL_IDS} availableIntervals={AVAILABLE_INTERVALS} onCreate={clickTradingSetupAdded} onSave={clickTradingSetupSave} onDelete={clickTradingSetupDelete} />
             </Modal>
             <Modal show={historyTradingSetupShowing} clickClose={() => setHistoryTradingSetupShowing(false)}>
                 <TradingSetupHistoryView tradingSetup={selectedTradingSetupShowing!}/>

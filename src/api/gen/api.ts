@@ -587,6 +587,12 @@ export interface TradingStopLossConfigModel {
      * @memberof TradingStopLossConfigModel
      */
     'timeout': number;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof TradingStopLossConfigModel
+     */
+    'isBasedOnMaxPrice': boolean;
 }
 /**
  * 

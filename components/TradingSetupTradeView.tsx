@@ -30,7 +30,9 @@ export const TradingSetupTradeView = ({ tradingSetup, trade }: Props) =>
   const isTrailingTPActivated = hasTrailingTP ? MathUtils.IsGreaterThanOrEqualTo(trade.highestPriceAmount, takeProfitTriggerAmount) : false
   const trailingTPActivation = isTrailingTPActivated ? MathUtils.Shorten(MathUtils.MultiplyNumbers(trade.highestPriceAmount, "" + (1.0 - (tradingSetup.config.takeProfit?.trailingStop?.deltaPercentage ?? 0)))) : "0"
 
-  const stopLossTriggerAmount = tradingSetup.config.stopLoss != null ? MathUtils.Shorten(MathUtils.MultiplyNumbers(entryPrice, "" + (1.0 - (tradingSetup.config.stopLoss!.percentage ?? 0)))) : "0"
+  
+  const stopLossThresholdAmount = tradingSetup.config.stopLoss?.isBasedOnMaxPrice ? trade.highestPriceAmount : entryPrice
+  const stopLossTriggerAmount = tradingSetup.config.stopLoss != null ? MathUtils.Shorten(MathUtils.MultiplyNumbers(stopLossThresholdAmount, "" + (1.0 - (tradingSetup.config.stopLoss!.percentage ?? 0)))) : "0"
   
   const sellTransactionPending = useMemo(() => {
     //TODO:
