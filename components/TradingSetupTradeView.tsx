@@ -86,7 +86,7 @@ export const TradingSetupTradeView = ({ tradingSetup, trade }: Props) =>
       <div id={'currentTradeEntry'} className="trade_item">
         <AttachMoneySharp/>
         <span className="trade_item_name">Entry Price:</span>
-        <span className="trade_item_value">{MathUtils.Shorten(entryPrice, 2)}</span>
+        <span className="trade_item_value">{MathUtils.Shorten(entryPrice, 3)}</span>
       </div>
       <div id={'takeProfit'} className="trade_item">
         <AttachMoneySharp style={{color:"Orange"}}/>

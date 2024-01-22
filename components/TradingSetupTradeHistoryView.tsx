@@ -49,7 +49,7 @@ export const TradingSetupTradeHistoryView = ({ tradingSetup, trade }: Props) =>
           <div id={'sellEntry'} className="trade_item">
             <AttachMoneySharp/>
             <span className="trade_item_name">Price:</span>
-            <span className="trade_item_value">${MathUtils.Shorten(transaction.priceAmount, 2)}</span>
+            <span className="trade_item_value">${MathUtils.Shorten(transaction.priceAmount, 3)}</span>
           </div>
           <div id={'currentTradeEntry'} className="trade_item">
             <AttachMoneySharp/>
@@ -75,7 +75,7 @@ export const TradingSetupTradeHistoryView = ({ tradingSetup, trade }: Props) =>
       <div id={'currentTradeEntry'} className="trade_item">
         <AttachMoneySharp/>
         <span className="trade_item_name">Price:</span>
-        <span className="trade_item_value">${MathUtils.Shorten(startingPrice, 2)}</span>
+        <span className="trade_item_value">${MathUtils.Shorten(startingPrice, 3)}</span>
       </div>
       <div id={'currentTradeFirst'} className="trade_item">
         <AttachMoneySharp/>

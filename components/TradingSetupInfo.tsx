@@ -89,7 +89,7 @@ export const TradingSetupInfo = ({ tradingSetup, clickConfig, clickCopy, clickPa
       <article id={'price'} className={`section__item`}>
         <AttachMoney style={{color:"Blue"}}/>
         <span className="section__item__name" style={{color:"Blue"}}>Price:</span>
-        <span className="section__item__value" style={{color:"Blue"}}>{MathUtils.Shorten(tradingSetup.currentPriceAmount, 2)}</span>
+        <span className="section__item__value" style={{color:"Blue"}}>{MathUtils.Shorten(tradingSetup.currentPriceAmount, 3)}</span>
       </article>
       <span className="section__header">Current</span>
       <article id={'current'} className={`section__item`}>
