@@ -38,6 +38,9 @@ export const TradingSetupInfo = ({ tradingSetup, clickConfig, clickCopy, clickPa
   const currentAmount = GetTotalAmount(tradingSetup)
   const profitAmount = MathUtils.Shorten(MathUtils.SubtractNumbers(currentAmount, startingAmount), 2)
   const profitPercentage = MathUtils.Shorten(MathUtils.DivideNumbers(profitAmount, startingAmount), 3)
+  const feesAmount = MathUtils.Shorten(tradingSetup.feesAmount, 2)
+  const feesAsset = tradingSetup.feesAsset
+  const feesLastTradeAmount = MathUtils.Shorten(tradingSetup.feesLastTradeAmount, 2)
   const color = MathUtils.IsZero(profitAmount) ? "Black" : MathUtils.IsBiggerThanZero(profitAmount) ? "Green" : "Red"
  
   const openTransactionViews = useMemo(() => {
@@ -91,6 +94,14 @@ export const TradingSetupInfo = ({ tradingSetup, clickConfig, clickCopy, clickPa
         <span className="section__item__name" style={{color:"Blue"}}>Price:</span>
         <span className="section__item__value" style={{color:"Blue"}}>{MathUtils.Shorten(tradingSetup.currentPriceAmount, 3)}</span>
       </article>
+      {MathUtils.IsBiggerThanZero(feesAmount) && <article id={'fees'} className={`section__item`}>
+        <span className="section__item__name" style={{color:"Red"}}>Fees:</span>
+        <span className="section__item__value" style={{color:"Red"}}>{feesAmount} {feesAsset}</span>
+      </article>}
+      {MathUtils.IsBiggerThanZero(feesLastTradeAmount) && <article id={'feesLastTrade'} className={`section__item`}>
+        <span className="section__item__name" style={{color:"Red"}}>Fees Last:</span>
+        <span className="section__item__value" style={{color:"Red"}}>{feesLastTradeAmount} {feesAsset}</span>
+      </article>}
       <span className="section__header">Current</span>
       <article id={'current'} className={`section__item`}>
         <AttachMoney style={{color}}/>

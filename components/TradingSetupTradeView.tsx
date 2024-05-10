@@ -108,6 +108,13 @@ export const TradingSetupTradeView = ({ tradingSetup, trade }: Props) =>
     </div>}
     {sellTransactionPending}
     {sellTransactionsComplete}
+    {MathUtils.IsBiggerThanZero(trade.feesAmount) && <div className="trade_section">
+      <div id={'fees'} className="trade_item">
+        <AttachMoney style={{color:"Red"}}/>
+        <span className="trade_item_name" style={{color:"Red"}}>Fees:</span>
+        <span className="trade_item_value" style={{color:"Red"}}>{trade.feesAmount} <span>{trade.feesAsset}</span></span>
+      </div>
+    </div>}
     <div className="trade_section_title">Tokens</div>
     <div className="trade_section">
       <div id={'firstToken'} className="trade_item">

@@ -424,6 +424,24 @@ export interface TradingSetupModel {
     'finishedTrades': Array<TradingSetupTradeModel>;
     /**
      * 
+     * @type {string}
+     * @memberof TradingSetupModel
+     */
+    'feesAmount': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof TradingSetupModel
+     */
+    'feesLastTradeAmount': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof TradingSetupModel
+     */
+    'feesAsset': string;
+    /**
+     * 
      * @type {number}
      * @memberof TradingSetupModel
      */
@@ -484,6 +502,18 @@ export interface TradingSetupTradeModel {
      * @memberof TradingSetupTradeModel
      */
     'secondAmount': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof TradingSetupTradeModel
+     */
+    'feesAmount': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof TradingSetupTradeModel
+     */
+    'feesAsset': string;
     /**
      * 
      * @type {number}
@@ -692,6 +722,18 @@ export interface TradingTransactionModel {
      * @memberof TradingTransactionModel
      */
     'transactionId': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof TradingTransactionModel
+     */
+    'commissionAmount': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof TradingTransactionModel
+     */
+    'commissionAsset': string;
     /**
      * 
      * @type {boolean}
