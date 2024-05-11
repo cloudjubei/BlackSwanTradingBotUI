@@ -18,6 +18,8 @@ const AVAILABLE_SIGNAL_IDS = [
 	"rsi9Overbought", "rsi9Oversold",
 	"bollingerHighWithRSI30Overbought", "bollingerLowWithRSI30Oversold",
 	"dump1_00_01", "pump1_00_01", "dump3_00_05", "pump3_00_05", "dump5_00_10", "pump5_00_10",
+    "lwStrategyUp", "lwStrategyDown"
+
     // "model_ai_1", "model_ai_2", "model_ai_3"
 ]
 
