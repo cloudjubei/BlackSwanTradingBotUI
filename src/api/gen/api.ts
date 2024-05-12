@@ -586,6 +586,12 @@ export interface TradingSetupTradeModel {
      * @memberof TradingSetupTradeModel
      */
     'failedDueToMarketMaking': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof TradingSetupTradeModel
+     */
+    'stopLossHardSellRetries': number;
 }
 
 export const TradingSetupTradeModelStatusEnum = {
@@ -623,6 +629,12 @@ export interface TradingStopLossConfigModel {
      * @memberof TradingStopLossConfigModel
      */
     'isBasedOnMaxPrice': boolean;
+    /**
+     * 
+     * @type {number}
+     * @memberof TradingStopLossConfigModel
+     */
+    'retriesBeforeHardSell': number;
 }
 /**
  * 

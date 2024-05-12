@@ -1,6 +1,6 @@
 import React, { useMemo } from "react"
 import { AttachMoney, AttachMoneySharp, Bolt, BuildCircle, CurrencyBitcoin, CurrencyExchange, Dangerous, Error, History, LocalAtm, Money, Paid, Sell, Timeline, TripOrigin } from '@mui/icons-material'
-import { TradingSetupModel, TradingSetupStatusType, TradingSetupTradeModel, TradingSetupTradeModelStatusEnum, TradingTransactionModel } from "../src/api/gen"
+import { TradingSetupActionType, TradingSetupModel, TradingSetupStatusType, TradingSetupTradeModel, TradingSetupTradeModelStatusEnum, TradingTransactionModel } from "../src/api/gen"
 import MathUtils from "../src/commons/lib/mathUtils"
 
 interface Props {
@@ -35,7 +35,15 @@ export const TradingSetupTradeView = ({ tradingSetup, trade }: Props) =>
   const stopLossTriggerAmount = tradingSetup.config.stopLoss != null ? MathUtils.Shorten(MathUtils.MultiplyNumbers(stopLossThresholdAmount, "" + (1.0 - (tradingSetup.config.stopLoss!.percentage ?? 0)))) : "0"
   
   const sellTransactionPending = useMemo(() => {
-    //TODO:
+    if (trade.currentAction.type === TradingSetupActionType.Stoploss){
+      return <div className='trade_section'>
+            <div id={'sell_token'} className="trade_item">
+              <AttachMoney style={{color: "Red"}}/>
+              <span className="trade_item_name" style={{color: "Red"}}>SL Triggered</span>
+              <span className="trade_item_value" style={{color: "Red"}}>retries left: {trade.stopLossHardSellRetries}</span>
+            </div>
+      </div>
+    }
     return <></>
   }, [trade.sellTransactionPending])
 

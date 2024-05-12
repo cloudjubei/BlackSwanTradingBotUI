@@ -29,6 +29,7 @@ export interface TradingSetupConfigFormData
     stopLossPercentage: number,
     stopLossTimeout: number,
 	stopLossIsBasedOnMaxPrice: boolean,
+    stopLossRetriesBeforeHardSell: number,
 
     use_LimitOrders: boolean
     use_LimitMakerOrders: boolean
@@ -73,6 +74,7 @@ const Page: React.FC<Props> = ({ tradingSetup, tradingSetupToCopy, prices, avail
 						percentage: formData.stopLossPercentage,
 						timeout: formData.stopLossTimeout,
 						isBasedOnMaxPrice: formData.stopLossIsBasedOnMaxPrice,
+						retriesBeforeHardSell: formData.stopLossRetriesBeforeHardSell,
 					} as TradingStopLossConfigModel : undefined,
 		
 					useLimitOrders: formData.use_LimitOrders,
@@ -103,6 +105,7 @@ const Page: React.FC<Props> = ({ tradingSetup, tradingSetupToCopy, prices, avail
                 percentage: formData.stopLossPercentage,
 				timeout: formData.stopLossTimeout,
 				isBasedOnMaxPrice: formData.stopLossIsBasedOnMaxPrice,
+				retriesBeforeHardSell: formData.stopLossRetriesBeforeHardSell,
             } as TradingStopLossConfigModel : undefined,
 
 			useLimitOrders: formData.use_LimitOrders,
@@ -129,6 +132,7 @@ const Page: React.FC<Props> = ({ tradingSetup, tradingSetupToCopy, prices, avail
 			stopLossPercentage: 0,
 			stopLossTimeout: 0,
 			stopLossIsBasedOnMaxPrice: false,
+			stopLossRetriesBeforeHardSell: 3,
 			useTrailingTakeProfit: false,
             use_LimitOrders: true,
 			use_LimitMakerOrders: false,
@@ -384,6 +388,14 @@ const Page: React.FC<Props> = ({ tradingSetup, tradingSetupToCopy, prices, avail
 						formValidation={{ required: useStopLoss, min: 0.00001, valueAsNumber: true }}
 						placeholder='15% == 0.15'
 						label='Percentage to trigger Stop Loss'
+					/>
+					<TextInput
+						className='input-item'
+						id='stopLossRetriesBeforeHardSell-input'
+						formField='stopLossRetriesBeforeHardSell'
+						formValidation={{ required: useStopLoss, min: 0, valueAsNumber: true }}
+						placeholder='retries'
+						label='This only works with SL & Limit orders => after specified retries, it will Market Sell'
 					/>
 					<TextInput
 						className='input-item'
