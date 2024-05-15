@@ -10,7 +10,7 @@ import TradingSetupHistoryView from '../components/TradingSetupHistoryView'
 const UPDATE_TIME = 1000
 
 const AVAILABLE_TOKEN_PAIRS = [
-    "BTCFDUSD", "BTCUSDT", "BTCTUSD", "BTCUSDC", "ETHUSDT", "ETHUSDC", "XRPUSDT", "DOTUSDT", "DOGEUSDT", "SOLUSDT", "LTCUSDT"
+    "BTCUSDT", "BTCTUSD", "BTCUSDC", "ETHUSDT", "ETHUSDC", "XRPUSDT"
 ]
 const AVAILABLE_SIGNAL_IDS = [
 	"bollingerHighSignal", "bollingerLowSignal", 
@@ -23,7 +23,7 @@ const AVAILABLE_SIGNAL_IDS = [
     // "model_ai_1", "model_ai_2", "model_ai_3"
 ]
 
-const AVAILABLE_INTERVALS = ["1m", "5m", "15m", "1h"]
+const AVAILABLE_INTERVALS = ["1m", "5m", "15m"]
 
 export default function Home()
 {
