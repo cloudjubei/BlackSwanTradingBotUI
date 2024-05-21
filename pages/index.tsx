@@ -10,7 +10,7 @@ import TradingSetupHistoryView from '../components/TradingSetupHistoryView'
 const UPDATE_TIME = 1000
 
 const AVAILABLE_TOKEN_PAIRS = [
-    "BTCFDUSD", "BTCUSDT", "BTCTUSD", "BTCUSDC", "ETHUSDT", "ETHUSDC", "XRPUSDT"
+    "BTCFDUSD", "BTCUSDT", "ETHUSDT", "ETHFDUSD"
 ]
 const AVAILABLE_SIGNAL_IDS = [
 	"bollingerHighSignal", "bollingerLowSignal", 
