@@ -120,7 +120,7 @@ export const TradingSetupTradeView = ({ tradingSetup, trade }: Props) =>
       <div id={'fees'} className="trade_item">
         <AttachMoney style={{color:"Red"}}/>
         <span className="trade_item_name" style={{color:"Red"}}>Fees:</span>
-        <span className="trade_item_value" style={{color:"Red"}}>{trade.feesAmount} <span>{trade.feesAsset}</span></span>
+        <span className="trade_item_value" style={{color:"Red"}}>{MathUtils.Shorten(trade.feesAmount, 2)} <span>{trade.feesAsset}</span></span>
       </div>
     </div>}
     <div className="trade_section_title">Tokens</div>
